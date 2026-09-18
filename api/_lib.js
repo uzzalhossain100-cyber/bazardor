@@ -292,6 +292,60 @@ async function fetchMeena(q) {
   };
 }
 
+/* ---------------------- ৫) ডেইলি শপিং (ওথোবা) ---------------------- */
+// dailyshoppingbd.com এখন othoba.com-এ "ডেইলি শপিং" ভেন্ডর স্টোর হিসেবে চলে।
+// সার্চ পেজে নাম+লিঙ্ক আসে, দাম ডিটেইল পেজে — প্রথম ৮টি সমান্তরালে নেওয়া হয়।
+async function fetchOthoba(q) {
+  const searchUrl =
+    `https://www.othoba.com/ts/search/daily-shopping?vendorId=51&q=${encodeURIComponent(q)}`;
+  const res = await timedFetch(searchUrl, {
+    headers: baseHeaders({ Accept: 'text/html', Referer: 'https://www.othoba.com/daily-shopping' }),
+  });
+  if (!res.ok) throw new Error(`HTTP ${res.status}`);
+  const html = await res.text();
+
+  const links = [];
+  const re = /<h4 class="product-name">\s*<a href="([^"]+)"[^>]*>\s*([^<]+?)\s*<\/a>/g;
+  let m;
+  while ((m = re.exec(html)) && links.length < 8) {
+    const u = m[1].startsWith('http') ? m[1] : 'https://www.othoba.com' + m[1];
+    if (!links.some((x) => x.url === u)) links.push({ url: u, name: m[2].trim() });
+  }
+  if (!links.length) throw new Error('কোনো পণ্য পাওয়া যায়নি');
+
+  const pages = await Promise.all(
+    links.map((l) =>
+      timedFetch(l.url, { headers: baseHeaders() }, 5500)
+        .then((r) => (r.ok ? r.text() : null))
+        .catch(() => null)
+    )
+  );
+
+  const items = [];
+  links.forEach((l, i) => {
+    const h = pages[i];
+    if (!h) return;
+    const pv =
+      /itemprop="price"[^>]*content="([\d.]+)"/.exec(h) ||
+      /price-value-\d+[^>]*>\s*Tk\s*([\d,]+)/.exec(h);
+    if (!pv) return;
+    const price = round2(String(pv[1]).replace(/,/g, ''));
+    if (price == null || price <= 0) return;
+    const t = /<h1[^>]*>([^<]+?)\s*<\/h1>/.exec(h);
+    items.push({
+      name: t ? t[1].trim() : l.name,
+      desc: '',
+      price,
+      oldPrice: null,
+      unit: '',
+      image: null,
+      url: l.url,
+    });
+  });
+  if (!items.length) throw new Error('দাম পাওয়া যায়নি');
+  return { items, searchUrl };
+}
+
 /* ------------------------------ এগ্রিগেশন ------------------------------ */
 
 const SOURCES = [
@@ -299,6 +353,7 @@ const SOURCES = [
   { key: 'chaldal', name: 'চালডাল', site: 'chaldal.com', fetcher: fetchChaldal },
   { key: 'agora', name: 'অ্যাগোরা', site: 'agorasuperstores.com', fetcher: fetchAgora },
   { key: 'meena', name: 'মীনা বাজার', site: 'meenabazaronline.com', fetcher: fetchMeena },
+  { key: 'dailyshop', name: 'ডেইলি শপিং', site: 'dailyshoppingbd.com', fetcher: fetchOthoba },
 ];
 
 async function withRetry(fn, attempts = 2, delayMs = 600) {
@@ -479,9 +534,90 @@ async function fetchMedex(q) {
   return { items, searchUrl: `https://medex.com.bd/find?q=${encodeURIComponent(q)}` };
 }
 
+/* ---------------------- ৩) মেডিজি (medeasy.health) ---------------------- */
+// কোনো পাবলিক সার্চ এপিআই নেই — তাই সাইটম্যাপ (১৬,৮০০+ ঔষধের স্লাগ) ক্যাশ করে
+// স্থানীয়ভাবে নাম মিলিয়ে সেরা মিলগুলোর SSG পেজ থেকে দাম নেওয়া হয়।
+let medeasySlugs = null;
+let medeasySlugsAt = 0;
+const MEDEASY_TTL = 6 * 60 * 60 * 1000; // ৬ ঘণ্টা
+
+async function getMedeasySlugs() {
+  const now = Date.now();
+  if (medeasySlugs && now - medeasySlugsAt < MEDEASY_TTL) return medeasySlugs;
+  const res = await timedFetch('https://api.medeasy.health/api/sitemap/', { headers: baseHeaders() }, 8000);
+  if (!res.ok) throw new Error(`HTTP ${res.status}`);
+  const data = await res.json();
+  const slugs = ((data.results && data.results.medicines) || []).filter(Boolean);
+  medeasySlugs = slugs;
+  medeasySlugsAt = now;
+  return slugs;
+}
+
+function medeasyMatches(slugs, q) {
+  const qn = q.toLowerCase().replace(/[^a-z0-9]/g, '');
+  if (!qn) return [];
+  const scored = [];
+  for (const s of slugs) {
+    const sn = s.replace(/-/g, '');
+    let score = -1;
+    if (sn.startsWith(qn)) score = 0;                               // শুরুতেই মিল
+    else if (s.split('-')[0].startsWith(qn)) score = 1;             // প্রথম শব্দে মিল
+    else if (sn.includes(qn)) score = 2;                            // ভেতরে মিল
+    else if (qn.length >= 4 && s.includes(qn)) score = 3;           // স্লাগে আংশিক
+    if (score >= 0) scored.push({ s, score });
+  }
+  scored.sort((a, b) => a.score - b.score || a.s.length - b.s.length);
+  return scored.slice(0, 6).map((x) => x.s);
+}
+
+async function fetchMedeasy(q) {
+  const slugs = await getMedeasySlugs();
+  const matched = medeasyMatches(slugs, q);
+  if (!matched.length) throw new Error('কোনো ঔষধ পাওয়া যায়নি');
+
+  const pages = await Promise.all(
+    matched.map((slug) =>
+      timedFetch(`https://medeasy.health/bn/medicines/${slug}`, { headers: baseHeaders() }, 5500)
+        .then((r) => (r.ok ? r.text() : null))
+        .catch(() => null)
+    )
+  );
+
+  const items = [];
+  for (const html of pages) {
+    if (!html) continue;
+    const m = /<script id="__NEXT_DATA__" type="application\/json">([\s\S]*?)<\/script>/.exec(html);
+    if (!m) continue;
+    let pi;
+    try {
+      pi = JSON.parse(m[1]).props.pageProps.productInfo;
+    } catch (e) { continue; }
+    if (!pi || !pi.medicine_name) continue;
+    const up = Array.isArray(pi.unit_prices) && pi.unit_prices.length ? pi.unit_prices[0] : null;
+    const price = up ? round2(up.price) : null;
+    if (price == null) continue;
+    let img = pi.medicine_image || null;
+    if (img && !/^https?:/.test(img)) {
+      img = img.startsWith('/') ? `https://api.medeasy.health${img}` : `https://api.medeasy.health/media/${img}`;
+    }
+    items.push({
+      name: `${pi.medicine_name}${pi.strength ? ' ' + pi.strength : ''}`,
+      desc: [pi.generic_name, pi.manufacturer_name].filter(Boolean).join(' • '),
+      price,
+      oldPrice: null,
+      unit: up ? up.unit : '',
+      image: img,
+      url: `https://medeasy.health/bn/medicines/${pi.slug}`,
+    });
+  }
+  if (!items.length) throw new Error('দাম পাওয়া যায়নি');
+  return { items, searchUrl: `https://medeasy.health/bn` };
+}
+
 const MED_SOURCES = [
   { key: 'arogga', name: 'আরোগা', site: 'arogga.com', fetcher: fetchAroggaMed },
   { key: 'medex', name: 'মেডেক্স', site: 'medex.com.bd', fetcher: fetchMedex },
+  { key: 'medeasy', name: 'মেডিজি', site: 'medeasy.health', fetcher: fetchMedeasy },
 ];
 
 async function aggregateMed(q) {
@@ -511,7 +647,7 @@ async function aggregateMed(q) {
 module.exports = {
   timedFetch, baseHeaders, utf8ToBase64, extractBalancedJson, round2,
   BN2EN, translateQuery,
-  fetchShwapno, fetchChaldal, fetchAgora, fetchMeena,
-  fetchAroggaMed, fetchMedex,
+  fetchShwapno, fetchChaldal, fetchAgora, fetchMeena, fetchOthoba,
+  fetchAroggaMed, fetchMedex, fetchMedeasy,
   SOURCES, MED_SOURCES, CACHE_TTL, MAX_ITEMS,
 };

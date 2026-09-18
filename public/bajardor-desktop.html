@@ -191,7 +191,8 @@
     border-bottom:1px dashed #eef3f0; text-decoration:none; transition:background .1s;
   }
   .item:last-child{border-bottom:0}
-  a.item:hover{background:#f6faf7}
+  a.item:hover,div.item:hover{background:#f6faf7}
+  .item{cursor:pointer}
   .thumb{
     width:56px;height:56px;border-radius:11px;background:#f1f5f2;flex:none;
     display:grid;place-items:center;overflow:hidden;border:1px solid #e8efe9;
@@ -214,6 +215,30 @@
     color:var(--green); text-decoration:none; background:#f7fbf8;
   }
   .more:hover{background:#eef7f0}
+
+  /* ইন-পেজ ডিটেইল প্যানেল */
+  .ovl{position:fixed;inset:0;background:rgba(14,22,18,.55);backdrop-filter:blur(2px);z-index:90;display:none;align-items:flex-end;justify-content:center}
+  .ovl.on{display:flex}
+  .sheet{background:var(--card);width:100%;max-width:560px;border-radius:20px 20px 0 0;max-height:86vh;overflow:auto;animation:up .18s ease-out}
+  @keyframes up{from{transform:translateY(30px);opacity:.5}to{transform:none;opacity:1}}
+  .shbar{display:flex;align-items:center;justify-content:space-between;padding:13px 18px;border-bottom:1px solid var(--line);position:sticky;top:0;background:var(--card);border-radius:20px 20px 0 0}
+  .shbar b{font-size:15px}
+  .shbar button{border:0;background:#eef3f0;color:var(--ink);width:34px;height:34px;border-radius:50%;font-size:16px;cursor:pointer}
+  .dimg{height:170px;display:grid;place-items:center;background:#f6f9f7;padding:12px}
+  .dimg img{max-height:145px;max-width:145px;object-fit:contain}
+  .dimg .ph{font-size:52px;opacity:.3}
+  .dbody{padding:16px 18px 24px}
+  .dbody h3{margin:0 0 4px;font-size:18px;line-height:1.35}
+  .dbody .meta{color:var(--muted);font-size:13.5px;margin-bottom:10px}
+  .dprice{display:flex;align-items:baseline;gap:10px;margin:6px 0 14px;flex-wrap:wrap}
+  .dprice b{font-size:26px;color:var(--green)}
+  .dprice s{color:#9aa8a0;font-size:16px}
+  .dprice .off{background:#fdeeda;color:#9a5b00;border-radius:6px;font-size:12px;font-weight:700;padding:2px 8px}
+  .dstore{display:flex;align-items:center;gap:8px;background:#f6faf7;border:1px solid #e6f0e9;border-radius:12px;padding:10px 12px;font-size:13.5px;margin-bottom:14px;flex-wrap:wrap}
+  .dstore .dot{width:10px;height:10px;border-radius:50%;display:inline-block}
+  .dgo{display:block;text-align:center;background:var(--green,#0b9344);color:#fff;text-decoration:none;font-weight:700;font-size:15px;border-radius:12px;padding:13px}
+  .dgo:hover{opacity:.92}
+  .oosb{background:#fde3e0;color:#b3452e;border-radius:6px;font-size:12px;font-weight:700;padding:2px 8px}
 
   /* ---------- স্কেলেটন ---------- */
   .sk{display:flex;gap:13px;align-items:center;padding:12px 18px;border-bottom:1px dashed #eef3f0}
@@ -1086,7 +1111,7 @@ function renderError(msg){
     `<div class="hint"><div class="big">⚠️</div><p>${esc(msg)}</p></div>`;
 }
 
-function grocItemHtml(it){
+function grocItemHtml(it,st){
   const off = it.oldPrice? Math.round((1-it.price/it.oldPrice)*100) : 0;
   const inner=`
     <div class="thumb">${it.image?`<img loading="lazy" src="${esc(it.image)}" onerror="this.parentNode.innerHTML='<span class=&quot;ph&quot;>🛒</span>'">`:'<span class="ph">🛒</span>'}</div>
@@ -1099,7 +1124,7 @@ function grocItemHtml(it){
       <span class="now">${tk(it.price)}</span>
       ${it.oldPrice?`<div><span class="old">${tk(it.oldPrice)}</span><span class="off">${toBn(off)}% ছাড়</span></div>`:''}
     </div>`;
-  return it.url? `<a class="item" href="${esc(it.url)}" target="_blank" rel="noopener">${inner}</a>` : `<div class="item">${inner}</div>`;
+  return `<div class="item" onclick="showDetail(${regItem(it,st)})">${inner}</div>`;
 }
 
 /* --------- ফলাফলের ক্রম: এক্সাক্ট ম্যাচ আগে, তারপর মিলের ভিত্তিতে --------- */
@@ -1113,6 +1138,29 @@ function relevanceScore(name, q){
   if(n.includes(s)) return 3;
   return 4;
 }
+/* ---------- ইন-পেজ ডিটেইল ---------- */
+let _diNo=0; const _dmap={};
+function regItem(it,st){ _dmap['i'+(++_diNo)]=[it,st]; return _diNo; }
+function showDetail(id){
+  const rec=_dmap['i'+id]; if(!rec) return;
+  const [it,st]=rec;
+  const off=it.oldPrice?Math.round((1-it.price/it.oldPrice)*100):0;
+  document.getElementById('dStore').innerHTML=`<span class="dot" style="background:${st.color};width:10px;height:10px;border-radius:50%;display:inline-block;margin-right:6px"></span>${esc(st.name)} <small style="color:var(--muted);font-weight:400">${esc(st.site)}</small>`;
+  document.getElementById('dImg').innerHTML=it.image?`<img src="${esc(it.image)}" onerror="this.parentNode.innerHTML='<span class=ph>🛒</span>'">`:'<span class="ph">🛒</span>';
+  document.getElementById('dBody').innerHTML=`
+    <h3>${esc(it.name)}</h3>
+    <div class="meta">${esc([it.unit,it.desc].filter(Boolean).join(' • '))||'—'}</div>
+    ${it.outOfStock?'<div style="margin-bottom:8px"><span class="oosb">এই মুহূর্তে স্টক নেই</span></div>':''}
+    <div class="dprice"><b>${tk(it.price)}</b>${it.oldPrice?`<s>${tk(it.oldPrice)}</s><span class="off">${toBn(off)}% ছাড়</span>`:''}</div>
+    <div class="dstore"><span class="dot" style="background:${st.color}"></span> এই দাম <b>${esc(st.name)}</b> (${esc(st.site)}) সাইট থেকে আজকে সংগৃহীত</div>
+    ${it.url?`<a class="dgo" href="${esc(it.url)}" target="_blank" rel="noopener">${esc(st.name)} সাইটে পণ্যটি দেখুন ↗</a>`:'<div class="meta">সরাসরি লিংক পাওয়া যায়নি</div>'}
+  `;
+  document.getElementById('dOvl').classList.add('on');
+  document.body.style.overflow='hidden';
+}
+function closeDetail(){ document.getElementById('dOvl').classList.remove('on'); document.body.style.overflow=''; }
+document.addEventListener('keydown',e=>{ if(e.key==='Escape') closeDetail(); });
+
 function sortItemsByRelevance(items, q){
   return items
     .map((it,i)=>({it,i,s:relevanceScore(it.name,q)}))
@@ -1150,7 +1198,7 @@ function render(data){
       meta='<b>০</b><br>পণ্য';
     } else {
       meta=`<b>${toBn(s.count)}${s.count>=MAX_ITEMS?'+':''}</b><br>পণ্য`;
-      body = sortItemsByRelevance(s.items, s.translatedQuery || data.query).map(grocItemHtml).join('');
+      body = sortItemsByRelevance(s.items, s.translatedQuery || data.query).map(it=>grocItemHtml(it,st)).join('');
       if(s.searchUrl) body+=`<a class="more" href="${esc(s.searchUrl)}" target="_blank" rel="noopener">${st.name} সাইটে আরও দেখুন ↗</a>`;
     }
     return `<section class="store" id="sec-${s.key}">
@@ -1236,7 +1284,7 @@ function medItemHtml(it){
       <span class="now">${tk(it.price)}</span>
       ${it.oldPrice?`<div><span class="old">${tk(it.oldPrice)}</span><span class="off">${toBn(off)}% ছাড়</span></div>`:''}
     </div>`;
-  return it.url? `<a class="item" href="${esc(it.url)}" target="_blank" rel="noopener">${inner}</a>` : `<div class="item">${inner}</div>`;
+  return `<div class="item" onclick="showDetail(${regItem(it,st)})">${inner}</div>`;
 }
 
 function medRender(data){
@@ -1284,5 +1332,12 @@ function medRender(data){
   `<footer style="margin-top:8px">“${esc(data.query)}” এর দাম সংগ্রহ হয়েছে <b>${t}</b>-এ। ঔষধ সেবনে অবশ্যই রেজিস্টার্ড চিকিৎসকের পরামর্শ নিন।</footer>`;
 }
 </script>
+<div class="ovl" id="dOvl" onclick="if(event.target===this)closeDetail()">
+  <div class="sheet">
+    <div class="shbar"><b id="dStore">पণ্যের বিস্তারিত</b><button onclick="closeDetail()" aria-label="বন্ধ">✕</button></div>
+    <div class="dimg" id="dImg"></div>
+    <div class="dbody" id="dBody"></div>
+  </div>
+</div>
 </body>
 </html>
