@@ -1,0 +1,1065 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>বাজারদর — এক সার্চে চার সাইটের দাম</title>
+<style>
+  :root{
+    --bg:#f3f6f4; --card:#ffffff; --ink:#17251f; --muted:#5f7268;
+    --line:#e3eae6; --green:#0e6b3f; --green2:#14985b; --gold:#f5b301;
+    --shwapno:#00833e; --chaldal:#009e9a; --agora:#d64027; --meena:#d81b60;
+    --arogga:#6c4bd3; --medex:#0072bc;
+    --radius:16px;
+  }
+  *{box-sizing:border-box; margin:0; padding:0}
+  html{scroll-behavior:smooth}
+  body{
+    font-family:"Noto Sans Bengali","Hind Siliguri","Nirmala UI",-apple-system,"Segoe UI",Roboto,sans-serif;
+    background:var(--bg); color:var(--ink); line-height:1.55; min-height:100vh;
+    padding-top:106px;
+  }
+  a{color:inherit}
+  .wrap{max-width:1060px; margin:0 auto; padding:0 16px}
+
+  /* ---------- টপ মেনু বার (দুই স্তর: নাম উপরে, মেনু নিচে) — স্ক্রল করলেও ফিক্সড ---------- */
+  .appbar{
+    position:fixed; top:0; left:0; right:0; z-index:100;
+    background:linear-gradient(135deg,#0b3d27,#0e6b3f);
+    box-shadow:0 2px 14px rgba(11,61,39,.28);
+    padding:6px 0 5px; border-bottom:1px solid rgba(255,255,255,.10);
+  }
+  .bar-top{position:relative; display:flex; align-items:center; justify-content:center; height:52px}
+  .bar-nav{height:42px; display:flex; align-items:center}
+  .backbtn{
+    position:absolute; left:0; top:50%; transform:translateY(-50%);
+    width:38px; height:38px; border-radius:11px; border:1px solid rgba(255,255,255,.28);
+    background:rgba(255,255,255,.14); color:#fff; font-size:19px; cursor:pointer;
+    display:grid; place-items:center; transition:.15s; line-height:1;
+  }
+  .backbtn:hover{background:rgba(255,255,255,.26)}
+  .backbtn[hidden]{display:none}
+  .brand{
+    display:flex; align-items:center; gap:10px; color:#fff; cursor:pointer;
+    font-size:21px; font-weight:800; letter-spacing:.3px; white-space:nowrap;
+  }
+  .brand small{
+    display:block; font-size:11.5px; font-weight:500; color:#cfe8db;
+    letter-spacing:0; margin-top:-3px;
+  }
+  .brand .logo{
+    width:38px; height:38px; border-radius:11px; background:rgba(255,255,255,.15);
+    display:grid; place-items:center; font-size:19px; border:1px solid rgba(255,255,255,.22);
+  }
+  #nav{
+    display:flex; gap:4px; overflow-x:auto; width:100%;
+    scrollbar-width:none; -webkit-overflow-scrolling:touch;
+  }
+  #nav::-webkit-scrollbar{display:none}
+  #nav button{
+    font:inherit; font-size:14.5px; font-weight:700; color:#cfe8db; background:transparent;
+    border:0; border-radius:999px; padding:8px 15px; cursor:pointer; white-space:nowrap;
+    transition:.15s;
+  }
+  #nav button:hover{color:#fff; background:rgba(255,255,255,.12)}
+  #nav button.active{color:#20301f; background:var(--gold); box-shadow:0 2px 8px rgba(0,0,0,.25)}
+
+  main{padding:20px 0 8px}
+  .page[hidden]{display:none}
+
+  /* ---------- হোম ---------- */
+  .hero{
+    background:
+      radial-gradient(700px 260px at 85% -60px, rgba(245,179,1,.28), transparent 60%),
+      linear-gradient(135deg,#0b3d27 0%, #0e6b3f 55%, #14985b 100%);
+    color:#fff; border-radius:20px; padding:30px 24px; overflow:hidden; position:relative;
+  }
+  .hero h2{font-size:clamp(21px,4vw,30px); font-weight:800}
+  .hero h2 span{color:#ffe08a}
+  .hero .sub{opacity:.9; margin-top:8px; font-size:14.5px; max-width:640px}
+  .hero .today{
+    margin-top:16px; font-size:13.5px; opacity:.95; display:inline-flex; align-items:center; gap:8px;
+    background:rgba(255,255,255,.14); padding:6px 14px; border-radius:999px;
+  }
+  .featgrid{display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:12px; margin-top:18px}
+  .feat{
+    background:var(--card); border:1px solid var(--line); border-radius:16px; padding:16px 14px;
+    cursor:pointer; text-align:left; font:inherit; transition:.15s; box-shadow:0 2px 10px rgba(11,61,39,.05);
+  }
+  .feat:hover{transform:translateY(-3px); box-shadow:0 10px 22px rgba(11,61,39,.12)}
+  .feat .ic{width:44px; height:44px; border-radius:12px; display:grid; place-items:center; font-size:21px; margin-bottom:10px}
+  .feat b{font-size:15.5px; display:block}
+  .feat small{color:var(--muted); font-size:12.5px; display:block; margin-top:3px}
+  .apkbtn{
+    display:inline-flex; align-items:center; gap:8px; margin-top:16px;
+    background:var(--gold); color:#20301f; font-weight:800; font-size:15px;
+    padding:11px 20px; border-radius:12px; text-decoration:none;
+    box-shadow:0 6px 18px rgba(0,0,0,.25); transition:.15s;
+  }
+  .apkbtn:hover{filter:brightness(1.07); transform:translateY(-1px)}
+  .qrcard{
+    margin-top:18px; padding:16px; border-radius:14px; text-align:center;
+    background:rgba(255,255,255,.07); border:1px dashed rgba(255,255,255,.35);
+  }
+  .qrcard b{font-size:14.5px}
+  .qrcard img{
+    display:block; margin:12px auto; border-radius:12px; background:#fff; padding:8px;
+    width:180px; height:180px;
+  }
+  .qrcard small{color:var(--muted); font-size:12px}
+  .qrcard .dlurl{
+    display:inline-block; margin-top:10px; font-size:11.5px; word-break:break-all;
+    background:rgba(0,0,0,.25); padding:6px 10px; border-radius:8px; color:#cfe6c8;
+  }
+
+  /* ---------- বাজারদর পেজ ---------- */
+  .pagedate{display:flex; align-items:center; gap:8px; color:var(--muted); font-size:13.5px; margin-bottom:12px}
+  .pagedate b{background:#e7f2ea; color:#20513a; padding:3px 12px; border-radius:999px; font-weight:600}
+  .searchcard{
+    background:var(--card); border-radius:var(--radius);
+    box-shadow:0 10px 30px rgba(11,61,39,.10); padding:18px;
+  }
+  .searchrow{display:flex; gap:10px}
+  .searchrow .box{position:relative; flex:1}
+  .searchrow svg.mag{position:absolute; left:15px; top:50%; transform:translateY(-50%); opacity:.45; z-index:2}
+  .searchrow input[type="text"]{
+    width:100%; font:inherit; font-size:17px; padding:14px 16px 14px 46px;
+    border:2px solid var(--line); border-radius:12px; outline:none; background:#fbfdfc;
+    transition:border-color .15s, box-shadow .15s; position:relative; z-index:1;
+  }
+  .searchrow input[type="text"]:focus{border-color:var(--green2); box-shadow:0 0 0 4px rgba(20,152,91,.14)}
+  .searchrow button[type="submit"]{
+    font:inherit; font-size:17px; font-weight:700; color:#fff; border:0; cursor:pointer;
+    background:linear-gradient(135deg,var(--green),var(--green2));
+    padding:14px 26px; border-radius:12px; display:flex; gap:8px; align-items:center;
+    transition:transform .06s, filter .15s;
+  }
+  .searchrow button[type="submit"]:hover{filter:brightness(1.06)}
+  .searchrow button[type="submit"]:active{transform:scale(.98)}
+  .searchrow button[type="submit"][disabled]{opacity:.6; cursor:wait}
+
+  /* ---------- সাজেশন ড্রপডাউন ---------- */
+  .suggest{
+    position:absolute; top:calc(100% + 6px); left:0; right:0; z-index:40;
+    background:#fff; border:1px solid var(--line); border-radius:12px;
+    box-shadow:0 14px 34px rgba(11,61,39,.18); display:none;
+    max-height:430px; overflow-y:auto;
+  }
+  .suggest.open{display:block}
+  .sitem{
+    display:flex; align-items:center; gap:11px; padding:10px 14px; cursor:pointer;
+    border-bottom:1px dashed #eef3f0; font-size:14.5px;
+  }
+  .sitem:last-child{border-bottom:0}
+  .sitem:hover, .sitem.sel{background:#f0f7f2}
+  .sitem .sic{flex:none; width:32px;height:32px;border-radius:9px;background:#fdeaea;display:grid;place-items:center;font-size:15px}
+  .sitem .snm{flex:1; min-width:0; font-weight:650; overflow:hidden; text-overflow:ellipsis}
+  .sitem .snm small{display:block; font-weight:400; color:var(--muted); font-size:12px}
+  .sitem mark{background:#ffe9a8; color:inherit; border-radius:3px; padding:0 1px}
+  .sitem .sgo{color:#9db3a7; font-size:14px; flex:none}
+  .chips{display:flex; gap:8px; flex-wrap:wrap; margin-top:12px}
+  .chip{
+    font:inherit; font-size:13.5px; cursor:pointer; background:#eef5f0; color:#2c4a3b;
+    border:1px solid #d9e6de; border-radius:999px; padding:5px 13px; transition:.12s;
+  }
+  .chip:hover{background:var(--green); border-color:var(--green); color:#fff}
+
+  /* ---------- তুলনা স্ট্রিপ ---------- */
+  #summary{display:none; margin-top:22px; gap:10px; grid-template-columns:repeat(4,1fr)}
+  @media (max-width:760px){ #summary{grid-template-columns:repeat(2,1fr)} }
+  .stile{
+    background:var(--card); border-radius:14px; padding:12px 14px; border:1px solid var(--line);
+    box-shadow:0 2px 10px rgba(11,61,39,.05); cursor:pointer; position:relative; transition:.15s;
+  }
+  .stile:hover{transform:translateY(-2px); box-shadow:0 8px 18px rgba(11,61,39,.10)}
+  .stile .sn{display:flex; align-items:center; gap:8px; font-weight:700; font-size:14px}
+  .dot{width:10px;height:10px;border-radius:99px; flex:none}
+  .stile .sp{font-size:19px; font-weight:800; margin-top:4px}
+  .stile .sp small{font-size:12px; color:var(--muted); font-weight:500}
+  .stile.err .sp{font-size:13px; color:#b3452e; font-weight:600}
+  .stile.best{border:2px solid var(--gold)}
+  .bestbadge{
+    position:absolute; top:-9px; right:10px; background:var(--gold); color:#4a3400;
+    font-size:11px; font-weight:800; padding:2px 9px; border-radius:999px;
+  }
+
+  /* ---------- স্টোর সেকশন ---------- */
+  #results{margin:26px 0 10px}
+  .store{
+    background:var(--card); border-radius:var(--radius); border:1px solid var(--line);
+    margin-bottom:18px; overflow:hidden; box-shadow:0 2px 12px rgba(11,61,39,.05);
+  }
+  .shead{display:flex; align-items:center; gap:12px; padding:14px 18px; border-bottom:1px solid var(--line)}
+  .mono{
+    width:42px;height:42px;border-radius:12px;color:#fff;font-weight:800;font-size:15px;
+    display:grid;place-items:center; flex:none;
+  }
+  .shead .t{flex:1; min-width:0}
+  .shead .t b{font-size:17px}
+  .shead .t small{display:block; color:var(--muted); font-size:12.5px}
+  .shead .meta{font-size:13px; color:var(--muted); text-align:right}
+  .shead .meta b{color:var(--ink); font-size:15px}
+  .status{padding:26px; text-align:center; color:var(--muted); font-size:14.5px}
+  .status.err{color:#b3452e}
+
+  .item{
+    display:flex; gap:13px; align-items:center; padding:11px 18px;
+    border-bottom:1px dashed #eef3f0; text-decoration:none; transition:background .1s;
+  }
+  .item:last-child{border-bottom:0}
+  a.item:hover{background:#f6faf7}
+  .thumb{
+    width:56px;height:56px;border-radius:11px;background:#f1f5f2;flex:none;
+    display:grid;place-items:center;overflow:hidden;border:1px solid #e8efe9;
+  }
+  .thumb img{width:100%;height:100%;object-fit:contain}
+  .thumb .ph{opacity:.35;font-size:22px}
+  .iname{flex:1; min-width:0}
+  .iname .n{font-size:14.5px; font-weight:650; overflow:hidden; text-overflow:ellipsis; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical}
+  .iname .d{font-size:12px; color:var(--muted); margin-top:1px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
+  .pr{text-align:right; flex:none}
+  .pr .now{font-size:16.5px; font-weight:800; color:var(--green)}
+  .pr .old{font-size:12.5px; color:#9aa8a0; text-decoration:line-through}
+  .pr .off{
+    display:inline-block; background:#fdeeda; color:#9a5b00; border-radius:6px;
+    font-size:11px; font-weight:700; padding:1px 6px; margin-left:6px;
+  }
+  .pr .oos{display:inline-block; background:#fde3e0; color:#b3452e; border-radius:6px; font-size:11px; font-weight:700; padding:1px 6px}
+  .more{
+    display:block; text-align:center; padding:12px; font-size:14px; font-weight:700;
+    color:var(--green); text-decoration:none; background:#f7fbf8;
+  }
+  .more:hover{background:#eef7f0}
+
+  /* ---------- স্কেলেটন ---------- */
+  .sk{display:flex;gap:13px;align-items:center;padding:12px 18px;border-bottom:1px dashed #eef3f0}
+  .sk .b{background:linear-gradient(90deg,#edf2ee 25%,#f7faf8 50%,#edf2ee 75%);background-size:200% 100%;animation:sh 1.2s infinite;border-radius:8px}
+  @keyframes sh{0%{background-position:200% 0}100%{background-position:-200% 0}}
+
+  .hint{
+    background:var(--card); border:1px dashed #cfdcd4; border-radius:var(--radius);
+    padding:38px 20px; text-align:center; color:var(--muted); margin-top:26px;
+  }
+  .hint .big{font-size:40px}
+  .hint b{color:var(--ink)}
+  .storegrid{display:grid; grid-template-columns:repeat(4,1fr); gap:10px; margin-top:20px}
+  @media (max-width:760px){ .storegrid{grid-template-columns:repeat(2,1fr)} }
+  .sbadge{display:flex;align-items:center;gap:9px;background:#f6faf7;border:1px solid var(--line);border-radius:12px;padding:10px 12px;font-size:13.5px;font-weight:650}
+  .sbadge small{display:block;font-weight:400;color:var(--muted);font-size:11px}
+
+  /* ---------- জরুরী সেবা ---------- */
+  .emgrid{display:grid; grid-template-columns:repeat(auto-fit,minmax(230px,1fr)); gap:12px; margin-top:16px}
+  .emcard{
+    display:flex; gap:12px; align-items:center; background:var(--card); border:1px solid var(--line);
+    border-radius:14px; padding:14px; text-decoration:none; transition:.15s;
+  }
+  .emcard:hover{transform:translateY(-2px); box-shadow:0 8px 18px rgba(11,61,39,.10)}
+  .emcard .ic{width:46px;height:46px;border-radius:12px;background:#fdeaea;display:grid;place-items:center;font-size:21px;flex:none}
+  .emcard b{font-size:14.5px; display:block}
+  .emcard small{color:var(--muted); font-size:12px; display:block}
+  .emcard .num{margin-left:auto; font-size:19px; font-weight:800; color:#b3452e; white-space:nowrap}
+  .emcard.primary{border:2px solid var(--gold); background:#fffaf0}
+  .emcard.primary .ic{background:#fff3d6}
+  .emcard.primary .num{font-size:26px; color:#9a5b00}
+
+  /* ---------- যোগাযোগ / শীঘ্রই ---------- */
+  .contactcard{
+    background:var(--card); border-radius:18px; padding:26px; max-width:430px;
+    box-shadow:0 10px 30px rgba(11,61,39,.10); border:1px solid var(--line);
+  }
+  .contactcard h3{font-size:20px; font-weight:800; margin-bottom:4px}
+  .contactcard .msub{color:var(--muted); font-size:13px; margin-bottom:14px}
+  .contactcard .row{display:flex; gap:10px; align-items:flex-start; margin:12px 0; font-size:15px}
+  .contactcard .row .ic{flex:none; width:36px; height:36px; border-radius:10px; background:#eef5f0; display:grid; place-items:center}
+  .contactcard a{color:var(--green); font-weight:700; word-break:break-all; text-decoration:none}
+  .contactcard a:hover{text-decoration:underline}
+  .soon{
+    background:var(--card); border-radius:18px; border:1px solid var(--line);
+    padding:44px 22px; text-align:center; box-shadow:0 6px 20px rgba(11,61,39,.07);
+  }
+  .soon .big{font-size:44px}
+  .soon h3{font-size:19px; margin-top:10px}
+  .soon p{color:var(--muted); font-size:14px; margin-top:6px; max-width:420px; margin-left:auto; margin-right:auto}
+  .pagetitle{font-size:20px; font-weight:800; display:flex; align-items:center; gap:10px}
+  .pagetitle .pt-ic{width:38px;height:38px;border-radius:11px;display:grid;place-items:center;font-size:18px;background:#e7f2ea}
+
+  footer{margin:34px 0 26px; color:var(--muted); font-size:12.5px; text-align:center; line-height:1.8}
+  footer b{color:var(--ink)}
+  .flash{animation:flash .8s}
+  @keyframes flash{0%{box-shadow:0 0 0 4px rgba(245,179,1,.55)}100%{box-shadow:0 0 0 0 rgba(245,179,1,0)}}
+</style>
+</head>
+<body>
+
+<div class="appbar">
+  <div class="wrap bar-top">
+    <button class="backbtn" id="backBtn" hidden title="আগের পেজে ফিরুন">←</button>
+    <div class="brand" id="brandHome">
+      <div class="logo">🛒</div>
+      <div>বাজারদর
+        <small>পণ্যের নাম লিখুন, আজকের দাম জানুন।</small>
+      </div>
+    </div>
+  </div>
+  <div class="wrap bar-nav">
+    <nav id="nav">
+      <button data-page="home">🏠 হোম</button>
+      <button data-page="bazar">🛒 নিত্যপণ্য</button>
+      <button data-page="medicine">💊 ঔষধ</button>
+      <button data-page="rent">🏠 বাড়িভাড়া</button>
+      <button data-page="emergency">🚨 জরুরী সেবা</button>
+      <button data-page="contact">📞 যোগাযোগ</button>
+    </nav>
+  </div>
+</div>
+
+<main class="wrap">
+
+  <!-- ============ হোম পেজ ============ -->
+  <section class="page" id="page-home">
+    <div class="hero">
+      <h2>পণ্যের নাম লিখুন, <span>আজকের দাম জানুন।</span></h2>
+      <p class="sub">স্বপ্ন, চালডাল, অ্যাগোরা ও মীনা বাজার — চারটি সাইটের দাম একসাথে তুলনা করুন, সাথে জরুরী সেবা ও আরও অনেক কিছু।</p>
+      <span class="today">📅 <b id="today" style="background:none;padding:0"></b></span>
+      <div><a id="apkBtn" class="apkbtn" href="/bajardor.apk" download>📥 অ্যান্ড্রয়েড অ্যাপ ডাউনলোড করুন (APK)</a></div>
+      <div class="qrcard" id="qrcard">
+        <b>📱 অথবা ফোন দিয়ে এই কোড স্ক্যান করুন — সরাসরি ফোনে ডাউনলোড হবে</b>
+        <img src="/api/qr" onerror="this.onerror=null;this.src='/qr-download.png'" alt="ডাউনলোড QR কোড" width="180" height="180">
+        <small>ফোনের ক্যামেরা খুলে কোডটি ধরুন, লিঙ্কে চাপ দিয়ে ডাউনলোড করুন</small>
+        <span class="dlurl" id="dlurl">বাজারদর ওয়েবসাইট থেকে ডাউনলোড হবে</span>
+      </div>
+    </div>
+    <div class="featgrid">
+      <button class="feat" data-page="bazar">
+        <span class="ic" style="background:#e7f2ea">🛒</span>
+        <b>নিত্যপণ্য</b><small>চার সাইটের দাম তুলনা</small>
+      </button>
+      <button class="feat" data-page="medicine">
+        <span class="ic" style="background:#fdeaea">💊</span>
+        <b>ঔষধ</b><small>ঔষধের দাম ও তথ্য</small>
+      </button>
+      <button class="feat" data-page="rent">
+        <span class="ic" style="background:#e8effa">🏘️</span>
+        <b>বাড়িভাড়া</b><small>ভাড়ার খোঁজ ও তথ্য</small>
+      </button>
+      <button class="feat" data-page="emergency">
+        <span class="ic" style="background:#fff3d6">🚨</span>
+        <b>জরুরী সেবা</b><small>হেল্পলাইন নম্বরসমূহ</small>
+      </button>
+      <button class="feat" data-page="contact">
+        <span class="ic" style="background:#f3e8f7">📞</span>
+        <b>যোগাযোগ</b><small>এডমিনের সাথে কথা বলুন</small>
+      </button>
+    </div>
+  </section>
+
+  <!-- ============ বাজারদর পেজ ============ -->
+  <section class="page" id="page-bazar" hidden>
+    <div class="pagedate">📅 <b id="today2"></b> — আজকের দাম, সরাসরি সাইটগুলো থেকে</div>
+
+    <div class="searchcard">
+      <form class="searchrow" id="form">
+        <div class="box">
+          <svg class="mag" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#17251f" stroke-width="2.4" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.6-3.6"/></svg>
+          <input id="q" type="text" placeholder="পণ্যের নাম লিখুন — যেমন: চাল, ডিম, সয়াবিন তেল…" autocomplete="off" maxlength="60">
+          <div class="suggest" id="suggest"></div>
+        </div>
+        <button id="go" type="submit">🔍 খুঁজুন</button>
+      </form>
+      <div class="chips" id="chips"></div>
+    </div>
+
+    <div id="summary"></div>
+    <div id="results">
+      <div class="hint">
+        <div class="big">🧺</div>
+        <p><b>যেকোনো পণ্যের নাম লিখে সার্চ করুন</b> — বাংলায় বা ইংরেজিতে।<br>
+        চারটি সাইটের আজকের দাম নিচে তুলে ধরা হবে।</p>
+        <div class="storegrid">
+          <div class="sbadge"><span class="dot" style="background:var(--shwapno)"></span> স্বপ্ন <small>shwapno.com</small></div>
+          <div class="sbadge"><span class="dot" style="background:var(--chaldal)"></span> চালডাল <small>chaldal.com</small></div>
+          <div class="sbadge"><span class="dot" style="background:var(--agora)"></span> অ্যাগোরা <small>agorasuperstores.com</small></div>
+          <div class="sbadge"><span class="dot" style="background:var(--meena)"></span> মীনা বাজার <small>meenabazaronline.com</small></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ ঔষধ পেজ ============ -->
+  <section class="page" id="page-medicine" hidden>
+    <div class="pagetitle"><span class="pt-ic">💊</span> ঔষধ</div>
+    <p style="color:var(--muted);font-size:13.5px;margin:6px 0 14px">ঔষধের <b>ইংরেজি নাম</b> লিখুন — আরোগা ও মেডেক্স থেকে আজকের দাম দেখুন।</p>
+
+    <div class="searchcard">
+      <form class="searchrow" id="mform">
+        <div class="box">
+          <svg class="mag" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#17251f" stroke-width="2.4" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.6-3.6"/></svg>
+          <input id="mq" type="text" placeholder="ঔষধের নাম লিখুন — যেমন: Napa, Seclo…" autocomplete="off" maxlength="60">
+          <div class="suggest" id="msuggest"></div>
+        </div>
+        <button id="mgo" type="submit">🔍 খুঁজুন</button>
+      </form>
+      <div class="chips" id="mchips"></div>
+    </div>
+
+    <div id="msummary"></div>
+    <div id="mresults">
+      <div class="hint">
+        <div class="big">💊</div>
+        <p><b>ঔষধের ইংরেজি নাম লিখে সার্চ করুন।</b><br>
+        আরোগা ও মেডেক্স — দুটি সাইটের দাম নিচে তুলে ধরা হবে।</p>
+        <div class="storegrid" style="grid-template-columns:repeat(2,1fr);max-width:440px;margin-left:auto;margin-right:auto">
+          <div class="sbadge"><span class="dot" style="background:var(--arogga)"></span> আরোগা <small>arogga.com</small></div>
+          <div class="sbadge"><span class="dot" style="background:var(--medex)"></span> মেডেক্স <small>medex.com.bd</small></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ বাড়িভাড়া পেজ ============ -->
+  <section class="page" id="page-rent" hidden>
+    <div class="pagetitle"><span class="pt-ic">🏘️</span> বাড়িভাড়া</div>
+    <div class="soon" style="margin-top:16px">
+      <div class="big">🏘️</div>
+      <h3>বাড়িভাড়া বিভাগ — শীঘ্রই আসছে</h3>
+      <p>এই বিভাগে এলাকাভিত্তিক বাড়িভাড়ার তথ্য ও খোঁজ খুঁজির সুবিধা যুক্ত করা হবে।</p>
+    </div>
+  </section>
+
+  <!-- ============ জরুরী সেবা পেজ ============ -->
+  <section class="page" id="page-emergency" hidden>
+    <div class="pagetitle"><span class="pt-ic">🚨</span> জরুরী সেবা</div>
+    <p style="color:var(--muted);font-size:13.5px;margin-top:6px">নম্বরে চাপ দিলেই কল হবে (মোবাইলে)। সব হেল্পলাইন টোল-ফ্রি।</p>
+    <div class="emgrid">
+      <a class="emcard primary" href="tel:999">
+        <span class="ic">🚨</span>
+        <div><b>জাতীয় জরুরী সেবা</b><small>পুলিশ • ফায়ার সার্ভিস • অ্যাম্বুলেন্স (২৪/৭)</small></div>
+        <span class="num">৯৯৯</span>
+      </a>
+      <a class="emcard" href="tel:333">
+        <span class="ic">🏛️</span>
+        <div><b>সরকারি সেবা ও তথ্য</b><small>সরকারি তথ্য সেবা</small></div>
+        <span class="num">৩৩৩</span>
+      </a>
+      <a class="emcard" href="tel:102">
+        <span class="ic">🚒</span>
+        <div><b>ফায়ার সার্ভিস</b><small>ফায়ার সার্ভিস ও সিভিল ডিফেন্স</small></div>
+        <span class="num">১০২</span>
+      </a>
+      <a class="emcard" href="tel:109">
+        <span class="ic">👩</span>
+        <div><b>নারী ও শিশু নির্যাতন প্রতিরোধ</b><small>হেল্পলাইন</small></div>
+        <span class="num">১০৯</span>
+      </a>
+      <a class="emcard" href="tel:1098">
+        <span class="ic">🧒</span>
+        <div><b>শিশু সহায়তা লাইন</b><small>শিশু সুরক্ষা</small></div>
+        <span class="num">১০৯৮</span>
+      </a>
+      <a class="emcard" href="tel:1090">
+        <span class="ic">🌪️</span>
+        <div><b>দুর্যোগ সতর্কীকরণ ও ত্রাণ</b><small>ঘূর্ণিঝড়, বন্যা তথ্য</small></div>
+        <span class="num">১০৯০</span>
+      </a>
+      <a class="emcard" href="tel:105">
+        <span class="ic">🪪</span>
+        <div><b>এনআইডি সেবা</b><small>জাতীয় পরিচয়পত্র তথ্য</small></div>
+        <span class="num">১০৫</span>
+      </a>
+      <a class="emcard" href="tel:16430">
+        <span class="ic">⚖️</span>
+        <div><b>আইনি সহায়তা</b><small>সরকারি আইনি সেবা</small></div>
+        <span class="num">১৬৪৩০</span>
+      </a>
+      <a class="emcard" href="tel:01908888888">
+        <span class="ic">💊</span>
+        <div><b>ঔষধ প্রশাসন অধিদপ্তর</b><small>ভেজাল ঔষধের অভিযোগ</small></div>
+        <span class="num">০১৯০৮-৮৮৮৮৮৮</span>
+      </a>
+    </div>
+  </section>
+
+  <!-- ============ যোগাযোগ পেজ ============ -->
+  <section class="page" id="page-contact" hidden>
+    <div class="pagetitle"><span class="pt-ic">📞</span> যোগাযোগ</div>
+    <div class="contactcard" style="margin-top:16px">
+      <h3>📞 যোগাযোগ</h3>
+      <div class="msub">বাজারদর অ্যাপ নিয়ে যেকোনো প্রয়োজনে</div>
+      <div class="row">
+        <span class="ic">👤</span>
+        <div><div style="color:var(--muted);font-size:12.5px">এডমিন</div><b>মোঃ উজ্জ্বল হোসেন</b></div>
+      </div>
+      <div class="row">
+        <span class="ic">✉️</span>
+        <div><div style="color:var(--muted);font-size:12.5px">ইমেইল</div>
+          <a href="mailto:uzzalhossain.100@gmail.com">uzzalhossain.100@gmail.com</a></div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    দাম ও স্টক প্রতি মুহূর্তে পরিবর্তন হতে পারে — প্রদর্শিত দাম স্ব স্ব সাইট থেকে স্বয়ংক্রিয়ভাবে সংগ্রহ করা এবং
+    প্রতি ১০ মিনিটে হালনাগাদ হয়। চূড়ান্ত দাম সাইটে/ডেলিভারির সময় নিশ্চিত করে নিন।<br>
+    <b>বাজারদর</b> কোনো পণ্য বিক্রি করে না; এটি শুধু দাম তুলনা করার টুল। ডাটা উৎস: স্বপ্ন • চালডাল • অ্যাগোরা • মীনা বাজার
+  </footer>
+</main>
+
+<script>
+/* ------------------------- পেজ নেভিগেশন ------------------------- */
+const PAGE_IDS = ['home','bazar','medicine','rent','emergency','contact'];
+let navHist=[], curPage='home', suppressPush=false;
+function showPage(key){
+  if(!PAGE_IDS.includes(key)) key='home';
+  if(!suppressPush && curPage && curPage!==key) navHist.push(curPage);
+  suppressPush=false;
+  curPage=key;
+  PAGE_IDS.forEach(p=>{
+    document.getElementById('page-'+p).hidden = (p!==key);
+  });
+  document.querySelectorAll('#nav button').forEach(b=>{
+    b.classList.toggle('active', b.dataset.page===key);
+  });
+  const bb=document.getElementById('backBtn');
+  if(bb) bb.hidden = (key==='home');
+  window.scrollTo(0,0);
+}
+function goPage(key){
+  if(location.hash === '#'+key){ showPage(key); }
+  else location.hash = key;
+}
+function goBack(){
+  const prev = navHist.length ? navHist.pop() : 'home';
+  suppressPush=true;
+  goPage(prev);
+}
+document.getElementById('backBtn').addEventListener('click', goBack);
+document.querySelectorAll('#nav button').forEach(b=>{
+  b.addEventListener('click', ()=>goPage(b.dataset.page));
+});
+document.querySelectorAll('.feat').forEach(b=>{
+  b.addEventListener('click', ()=>goPage(b.dataset.page));
+});
+document.getElementById('brandHome').addEventListener('click', ()=>goPage('home'));
+window.addEventListener('hashchange', ()=>showPage(location.hash.slice(1)));
+showPage(location.hash.slice(1) || 'home');
+
+// ডাইনামিক ডাউনলোড লিঙ্ক (ডিপ্লয় করা সাইটে নিজের ঠিকানাই দেখায়)
+if(/^https?:$/.test(location.protocol)){
+  const dl=document.getElementById('dlurl');
+  if(dl) dl.textContent = location.origin + '/bajardor.apk';
+}
+
+// অ্যাপের ভেতরে (APK) ডাউনলোড বাটন/কোড দেখানোর দরকার নেই
+if(location.host === 'bajardor.app'){
+  const ab=document.getElementById('apkBtn'); if(ab) ab.style.display='none';
+  const qc=document.getElementById('qrcard'); if(qc) qc.style.display='none';
+}
+
+/* ------------------------- বাজারদর লজিক ------------------------- */
+const STORES = {
+  shwapno:{name:'স্বপ্ন', site:'shwapno.com', color:'var(--shwapno)', mono:'স্ব'},
+  chaldal:{name:'চালডাল', site:'chaldal.com', color:'var(--chaldal)', mono:'চা'},
+  agora:{name:'অ্যাগোরা', site:'agorasuperstores.com', color:'var(--agora)', mono:'অ্যা'},
+  meena:{name:'মীনা বাজার', site:'meenabazaronline.com', color:'var(--meena)', mono:'মী'},
+};
+const CHIP_LIST = ['চাল','ডিম','পেঁয়াজ','আলু','সয়াবিন তেল','মুরগি','দুধ','চিনি','মসুর ডাল','ইলিশ'];
+
+const BN = {'0':'০','1':'১','2':'২','3':'৩','4':'৪','5':'৫','6':'৬','7':'৭','8':'৮','9':'৯'};
+const toBn = s => String(s).replace(/[0-9]/g, d => BN[d]);
+function tk(n){
+  if(n==null) return '—';
+  let s = Math.round(Number(n)).toString();
+  let out='';
+  if(s.length>3){ out=s.slice(-3); s=s.slice(0,-3);
+    while(s.length>2){ out=s.slice(-2)+','+out; s=s.slice(0,-2); }
+    if(s) out=s+','+out;
+  } else out=s;
+  return '৳' + toBn(out);
+}
+function esc(s){ return String(s??'').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+
+// আজকের বাংলা তারিখ
+(function(){
+  let txt;
+  try{
+    txt = new Intl.DateTimeFormat('bn-BD',{weekday:'long',day:'numeric',month:'long',year:'numeric'}).format(new Date());
+  }catch(e){ txt = new Date().toLocaleDateString(); }
+  document.getElementById('today').textContent = txt;
+  document.getElementById('today2').textContent = txt;
+})();
+
+// চিপস
+const chipBox = document.getElementById('chips');
+CHIP_LIST.forEach(c=>{
+  const b=document.createElement('button');
+  b.type='button'; b.className='chip'; b.textContent=c;
+  b.onclick=()=>{ document.getElementById('q').value=c; hideGSuggest(); search(c); };
+  chipBox.appendChild(b);
+});
+
+/* ---------- নিত্যপণ্য সাজেশন (টাইপ করার সাথে সাথে) ---------- */
+const GROC_SUGGEST = [
+  ['কাটারিভোগ চাল','চাল','katari bhog rice'], ['মিনিকেট চাল','চাল','miniket rice'],
+  ['বাশমতী চাল','চাল','basmati rice'], ['পোলাও চাল','চাল','polao rice'],
+  ['আটাশ চাল','চাল','atash rice'], ['লাল চাল','চাল','red rice brown rice'],
+  ['মসুর ডাল','ডাল','masoor lentil dal'], ['মুগ ডাল','ডাল','mung mung dal'],
+  ['ছোলার ডাল','ডাল','chola chickpea dal'], ['মটর ডাল','ডাল','motor pea dal'],
+  ['খেসারি ডাল','ডাল','khesari dal'],
+  ['সয়াবিন তেল','তেল ও ঘি','soybean oil'], ['সরিষার তেল','তেল ও ঘি','mustard oil'],
+  ['নারকেল তেল','তেল ও ঘি','coconut oil'], ['অলিভ অয়েল','তেল ও ঘি','olive oil'],
+  ['ঘি','তেল ও ঘি','ghee'], ['মাখন','তেল ও ঘি','butter'],
+  ['পেঁয়াজ','শাকসবজি','onion'], ['আলু','শাকসবজি','potato'], ['টমেটো','শাকসবজি','tomato'],
+  ['কাঁচা মরিচ','শাকসবজি','green chili'], ['রসুন','শাকসবজি','garlic'], ['আদা','শাকসবজি','ginger'],
+  ['বেগুন','শাকসবজি','brinjal eggplant'], ['শসা','শাকসবজি','cucumber'], ['গাজর','শাকসবজি','carrot'],
+  ['পটল','শাকসবজি','pointed gourd potol'], ['ঝিঙে','শাকসবজি','ridge gourd'], ['করলা','শাকসবজি','bitter gourd'],
+  ['লাউ','শাকসবজি','bottle gourd'], ['কুমড়া','শাকসবজি','pumpkin'], ['ফুলকপি','শাকসবজি','cauliflower'],
+  ['বাঁধাকপি','শাকসবজি','cabbage'], ['শিম','শাকসবজি','beans shim'], ['মুলা','শাকসবজি','radish'],
+  ['ঢেঁড়স','শাকসবজি','okra ladies finger'], ['পালং শাক','শাকসবজি','spinach'], ['পুঁই শাক','শাকসবজি','malabar spinach'],
+  ['বরবটি','শাকসবজি','yardlong bean'], ['লেবু','শাকসবজি','lemon lime'],
+  ['কলা','ফলমূল','banana'], ['আপেল','ফলমূল','apple'], ['আম','ফলমূল','mango'],
+  ['কাঁঠাল','ফলমূল','jackfruit'], ['পেঁপে','ফলমূল','papaya'], ['তরমুজ','ফলমূল','watermelon'],
+  ['আঙুর','ফলমূল','grape'], ['লিচু','ফলমূল','lychee litchi'], ['পেয়ারা','ফলমূল','guava'], ['কমলা','ফলমূল','orange'],
+  ['ইলিশ','মাছ','hilsa fish'], ['রুই','মাছ','rohu fish'], ['কাতলা','মাছ','katla fish'],
+  ['পাঙ্গাশ','মাছ','pangas fish'], ['তেলাপিয়া','মাছ','tilapia fish'], ['শিং','মাছ','shing fish'],
+  ['মাগুর','মাছ','magur fish'], ['চিংড়ি','মাছ','shrimp prawn'], ['লইট্টা','মাছ','loitta fish'],
+  ['শুঁটকি','মাছ','dried fish shutki'],
+  ['ব্রয়লার মুরগি','মাংস','broiler chicken'], ['দেশি মুরগি','মাংস','desi chicken'],
+  ['গরুর মাংশ','মাংস','beef'], ['খাসির মাংশ','মাংস','mutton goat'], ['হাঁস','মাংস','duck'],
+  ['ডিম','ডিম ও দুগ্ধ','egg'], ['হাঁসের ডিম','ডিম ও দুগ্ধ','duck egg'], ['দুধ','ডিম ও দুগ্ধ','milk'],
+  ['টক দই','ডিম ও দুগ্ধ','plain yogurt doi'], ['মিষ্টি দই','ডিম ও দুগ্ধ','sweet yogurt'], ['পনির','ডিম ও দুগ্ধ','cheese paneer'],
+  ['লবণ','মসলা','salt'], ['হলুদ গুঁড়া','মসলা','turmeric powder'], ['মরিচ গুঁড়া','মসলা','chili powder'],
+  ['জিরা','মসলা','cumin jeera'], ['ধনিয়া গুঁড়া','মসলা','coriander powder'], ['গরম মশলা','মসলা','garam masala'],
+  ['এলাচ','মসলা','cardamom'], ['দারুচিনি','মসলা','cinnamon'], ['তেজপাতা','মসলা','bay leaf'],
+  ['চিনি','মুদি','sugar'], ['গুড়','মুদি','jaggery gur'], ['আটা','মুদি','flour atta'],
+  ['ময়দা','মুদি','all purpose flour maida'], ['সুজি','মুদি','semolina suji'], ['চিড়া','মুদি','flattened rice chira'],
+  ['মুড়ি','মুদি','puffed rice muri'], ['নুডলস','মুদি','noodles'], ['সেমাই','মুদি','vermicelli semai'],
+  ['বিস্কুট','মুদি','biscuit'], ['পাউরুটি','মুদি','bread'], ['চা পাতা','মুদি','tea'],
+  ['কফি','মুদি','coffee'], ['মধু','মুদি','honey'],
+  ['সাবান','পরিচ্ছন্নতা','soap'], ['শ্যাম্পু','পরিচ্ছন্নতা','shampoo'], ['টুথপেস্ট','পরিচ্ছন্নতা','toothpaste'],
+  ['ডিটারজেন্ট পাউডার','পরিচ্ছন্নতা','detergent powder'], ['ডিশওয়াশ','পরিচ্ছন্নতা','dishwash'],
+  ['হ্যান্ডওয়াশ','পরিচ্ছন্নতা','handwash'], ['ফিনাইল','পরিচ্ছন্নতা','phenyl'], ['টয়লেট ক্লিনার','পরিচ্ছন্নতা','toilet cleaner'],
+]
+
+const qEl=document.getElementById('q');
+const gsug=document.getElementById('suggest');
+let gItems=[], gIdx=-1;
+
+function hideGSuggest(){ gsug.classList.remove('open'); gIdx=-1; }
+function gShowSuggest(){
+  const s=qEl.value.trim().toLowerCase();
+  if(!s){ hideGSuggest(); gsug.innerHTML=''; return; }
+  const starts=[], other=[];
+  for(const [n,g,en] of GROC_SUGGEST){
+    const ln=n.toLowerCase(), le=(en||'').toLowerCase();
+    if(ln.startsWith(s) || le.startsWith(s)) starts.push([n,g,en]);
+    else if(ln.includes(s) || le.includes(s) || g.toLowerCase().includes(s)) other.push([n,g,en]);
+  }
+  gItems=starts.concat(other).slice(0,16);
+  gIdx=-1;
+  if(!gItems.length){ hideGSuggest(); gsug.innerHTML=''; return; }
+  gsug.innerHTML = gItems.map(([n,g,en],i)=>`
+    <div class="sitem" data-i="${i}">
+      <span class="sic">🛒</span>
+      <span class="snm">${hlMatch(n,s)}<small>${esc(en||'')} • ${esc(g)}</small></span>
+      <span class="sgo">🔍</span>
+    </div>`).join('');
+  gsug.classList.add('open');
+  gsug.querySelectorAll('.sitem').forEach(el=>{
+    el.addEventListener('mousedown', ev=>{ ev.preventDefault(); gPickSuggest(Number(el.dataset.i)); });
+    el.addEventListener('mouseenter', ()=>gMarkSel(Number(el.dataset.i)));
+  });
+}
+function gMarkSel(i){
+  gIdx=i;
+  gsug.querySelectorAll('.sitem').forEach((el,j)=>el.classList.toggle('sel', j===i));
+}
+function gPickSuggest(i){
+  const it=gItems[i]; if(!it) return;
+  qEl.value=it[0];
+  hideGSuggest();
+  search(it[0]);
+}
+qEl.addEventListener('input', gShowSuggest);
+qEl.addEventListener('focus', ()=>{ if(qEl.value.trim()) gShowSuggest(); });
+qEl.addEventListener('blur', ()=>setTimeout(hideGSuggest,160));
+qEl.addEventListener('keydown', e=>{
+  if(!gsug.classList.contains('open')) return;
+  if(e.key==='ArrowDown'){ e.preventDefault(); gMarkSel(Math.min(gIdx+1, gItems.length-1)); }
+  else if(e.key==='ArrowUp'){ e.preventDefault(); gMarkSel(Math.max(gIdx-1, 0)); }
+  else if(e.key==='Enter' && gIdx>=0){ e.preventDefault(); gPickSuggest(gIdx); }
+  else if(e.key==='Escape'){ hideGSuggest(); }
+});
+
+// পেজ লোডে সার্ভার-সংযোগ পরীক্ষা — ফাইল-প্রিভিউ হলে সতর্কবার্তা
+(async function(){
+  try{
+    const r=await fetch('/api/health',{cache:'no-store'});
+    const d=await r.json();
+    if(!d.ok) throw 0;
+  }catch(e){
+    const w=document.createElement('div');
+    w.style.cssText='position:fixed;top:106px;left:0;right:0;z-index:49;background:#b3452e;color:#fff;text-align:center;font-size:13px;padding:7px 12px';
+    w.textContent='⚠️ এটি শুধু ডিজাইন-প্রিভিউ — সার্চ করতে লাইভ সার্ভার প্রিভিউ (“বাজারদর অ্যাপ”) খুলুন।';
+    document.body.prepend(w);
+  }
+})();
+
+document.getElementById('form').addEventListener('submit', e=>{
+  e.preventDefault();
+  const q=document.getElementById('q').value.trim();
+  if(q){ hideGSuggest(); search(q); }
+});
+
+let reqId=0, lastQ='';
+async function search(q){
+  const my=++reqId; lastQ=q;
+  const go=document.getElementById('go');
+  go.disabled=true;
+  renderLoading(q);
+  try{
+    const res=await fetch('/api/search?q='+encodeURIComponent(q));
+    const text=await res.text();
+    if(my!==reqId) return;
+    let data;
+    try{ data=JSON.parse(text); }catch(e){
+      renderNotConnected(text.slice(0,80));
+      return;
+    }
+    if(data.error){ renderError(data.error); return; }
+    render(data);
+  }catch(e){
+    if(my===reqId) renderNotConnected(String(e.message||e));
+  }finally{
+    if(my===reqId) go.disabled=false;
+  }
+}
+
+function renderNotConnected(detail){
+  document.getElementById('summary').style.display='none';
+  document.getElementById('results').innerHTML=`
+    <div class="hint">
+      <div class="big">🔌</div>
+      <p><b>বাজারদর সার্ভারের সাথে যোগাযোগ হয়নি।</b><br>
+      আপনি সম্ভবত ফাইল-প্রিভিউ থেকে অ্যাপটি দেখছেন। অনুগ্রহ করে <b>লাইভ সার্ভার প্রিভিউ</b> (“বাজারদর অ্যাপ”, পোর্ট ৩০০০) ব্যবহার করুন।<br>
+      <small style="opacity:.7">${esc(detail||'')}</small></p>
+      <p style="margin-top:14px"><button class="chip" type="button" onclick="lastQ && search(lastQ)">🔄 আবার চেষ্টা করুন</button></p>
+    </div>`;
+}
+
+function skeletonItems(){
+  return Array.from({length:3},()=>`
+    <div class="sk">
+      <div class="b" style="width:56px;height:56px;flex:none"></div>
+      <div style="flex:1"><div class="b" style="height:13px;width:80%;margin-bottom:8px"></div><div class="b" style="height:11px;width:45%"></div></div>
+      <div class="b" style="height:16px;width:70px"></div>
+    </div>`).join('');
+}
+
+function renderLoading(q){
+  const keys=Object.keys(STORES);
+  document.getElementById('summary').style.display='none';
+  document.getElementById('results').innerHTML = keys.map(k=>{
+    const s=STORES[k];
+    return `<section class="store" id="sec-${k}">
+      <div class="shead">
+        <div class="mono" style="background:${s.color}">${s.mono}</div>
+        <div class="t"><b>${s.name}</b><small>${s.site}</small></div>
+        <div class="meta">খোঁজা হচ্ছে…</div>
+      </div>
+      ${skeletonItems()}
+    </section>`;
+  }).join('');
+}
+
+function renderError(msg){
+  document.getElementById('results').innerHTML =
+    `<div class="hint"><div class="big">⚠️</div><p>${esc(msg)}</p></div>`;
+}
+
+/* --------- ফলাফলের ক্রম: এক্সাক্ট ম্যাচ আগে, তারপর মিলের ভিত্তিতে --------- */
+function relevanceScore(name, q){
+  const n = String(name||'').toLowerCase().trim();
+  const s = String(q||'').toLowerCase().trim();
+  if(!s || !n) return 4;
+  if(n === s) return 0;
+  if(n.startsWith(s)) return 1;
+  if(n.split(/\s+/).some(w=>w.startsWith(s))) return 2;
+  if(n.includes(s)) return 3;
+  return 4;
+}
+function sortItemsByRelevance(items, q){
+  return items
+    .map((it,i)=>({it,i,s:relevanceScore(it.name,q)}))
+    .sort((a,b)=> a.s-b.s || a.i-b.i)
+    .map(x=>x.it);
+}
+
+function render(data){
+  const sources=data.sources;
+  const byKey={}; sources.forEach(s=>byKey[s.key]=s);
+
+  // --- তুলনা স্ট্রিপ ---
+  const priced=sources.filter(s=>s.ok && s.minPrice!=null);
+  const best=priced.length? Math.min(...priced.map(s=>s.minPrice)) : null;
+  const sum=document.getElementById('summary');
+  sum.style.display='grid';
+  sum.innerHTML=sources.map(s=>{
+    const st=STORES[s.key];
+    if(!s.ok) return `<div class="stile err"><div class="sn"><span class="dot" style="background:${st.color}"></span>${st.name}</div><div class="sp">ডাটা পাওয়া যায়নি</div></div>`;
+    if(s.count===0) return `<div class="stile err"><div class="sn"><span class="dot" style="background:${st.color}"></span>${st.name}</div><div class="sp">কোনো পণ্য পাওয়া যায়নি</div></div>`;
+    const isBest = best!=null && s.minPrice===best && priced.filter(x=>x.minPrice===best).length===1;
+    return `<div class="stile ${isBest?'best flash':''}" onclick="document.getElementById('sec-${s.key}').scrollIntoView({behavior:'smooth'})">
+      ${isBest?'<span class="bestbadge">সেরা দাম 🏆</span>':''}
+      <div class="sn"><span class="dot" style="background:${st.color}"></span>${st.name}</div>
+      <div class="sp">${tk(s.minPrice)} <small>থেকে শুরু</small></div>
+    </div>`;
+  }).join('');
+
+  // --- বিস্তারিত ---
+  const t = new Date(data.fetchedAt).toLocaleTimeString('bn-BD',{hour:'numeric',minute:'2-digit'});
+  document.getElementById('results').innerHTML = sources.map(s=>{
+    const st=STORES[s.key];
+    let body, meta;
+    if(!s.ok){
+      body=`<div class="status err">⚠️ এই সাইট থেকে এখন ডাটা আনা যাচ্ছে না।<br><small>(${esc(s.error||'')})</small></div>`;
+      meta='<b>—</b><br>পণ্য';
+    } else if(s.count===0){
+      body=`<div class="status">😕 “${esc(data.query)}” এর জন্য কোনো পণ্য পাওয়া যায়নি। অন্য নামে খুঁজে দেখুন।</div>`;
+      meta='<b>০</b><br>পণ্য';
+    } else {
+      meta=`<b>${toBn(s.count)}${s.count>=12?'+':''}</b><br>পণ্য`;
+      body = sortItemsByRelevance(s.items, s.translatedQuery || data.query).map(it=>{
+        const off = it.oldPrice? Math.round((1-it.price/it.oldPrice)*100) : 0;
+        const inner=`
+          <div class="thumb">${it.image?`<img loading="lazy" src="${esc(it.image)}" onerror="this.parentNode.innerHTML='<span class=&quot;ph&quot;>🛒</span>'">`:'<span class="ph">🛒</span>'}</div>
+          <div class="iname">
+            <div class="n">${esc(it.name)}</div>
+            <div class="d">${esc([it.unit,it.desc].filter(Boolean).join(' • '))}</div>
+          </div>
+          <div class="pr">
+            ${it.outOfStock?'<span class="oos">স্টক নেই</span> ':''}
+            <span class="now">${tk(it.price)}</span>
+            ${it.oldPrice?`<div><span class="old">${tk(it.oldPrice)}</span><span class="off">${toBn(off)}% ছাড়</span></div>`:''}
+          </div>`;
+        return it.url? `<a class="item" href="${esc(it.url)}" target="_blank" rel="noopener">${inner}</a>` : `<div class="item">${inner}</div>`;
+      }).join('');
+      if(s.searchUrl) body+=`<a class="more" href="${esc(s.searchUrl)}" target="_blank" rel="noopener">${st.name} সাইটে আরও দেখুন ↗</a>`;
+    }
+    return `<section class="store" id="sec-${s.key}">
+      <div class="shead">
+        <div class="mono" style="background:${st.color}">${st.mono}</div>
+        <div class="t"><b>${st.name}</b><small>${st.site}${s.translatedQuery?` • সার্চ হয়েছে: “${esc(s.translatedQuery)}”`:''}</small></div>
+        <div class="meta">${meta}</div>
+      </div>
+      ${body}
+    </section>`;
+  }).join('') +
+  `<footer style="margin-top:8px">“${esc(data.query)}” এর জন্য দাম সংগ্রহ করা হয়েছে <b>${t}</b>-এ${data.fromCache?` (ক্যাশ থেকে, ${toBn(data.ageSec)} সেকেন্ড আগের)`:''}।</footer>`;
+}
+
+/* ------------------------- ঔষধ পেজ লজিক ------------------------- */
+const MED_STORES = {
+  arogga:{name:'আরোগা', site:'arogga.com', color:'var(--arogga)', mono:'আ'},
+  medex:{name:'মেডেক্স', site:'medex.com.bd', color:'var(--medex)', mono:'মে'},
+};
+const MED_CHIPS = ['Napa','Augmentin','Seclo','Cetirizine','Amoxil','Napa Extend','Rigix','Zimax'];
+
+const mchipBox = document.getElementById('mchips');
+MED_CHIPS.forEach(c=>{
+  const b=document.createElement('button');
+  b.type='button'; b.className='chip'; b.textContent=c;
+  b.onclick=()=>{ document.getElementById('mq').value=c; hideSuggest(); medSearch(c); };
+  mchipBox.appendChild(b);
+});
+document.getElementById('mform').addEventListener('submit', e=>{
+  e.preventDefault();
+  const q=document.getElementById('mq').value.trim();
+  if(q){ hideSuggest(); medSearch(q); }
+});
+
+/* ---------- ঔষধ সাজেশন (টাইপ করার সাথে সাথে) ---------- */
+const MED_SUGGEST = [
+  ['Napa','Paracetamol'], ['Napa Extend','Paracetamol (রিজার্ভ/এক্সটেন্ডেড)'], ['Napa EXTRA','Paracetamol + Caffeine'],
+  ['Calpol','Paracetamol (শিশুদের)'], ['Seclo','Omeprazole'], ['Risek','Omeprazole'],
+  ['Sergel','Esomeprazole'], ['Maxpro','Esomeprazole'], ['Entacyd','Antacid (Magnesium + Aluminium)'],
+  ['Gaviscon','Antacid + Alginate'], ['Sucrafil','Sucralfate'], ['Motilium','Domperidone'],
+  ['Imodium','Loperamide'], ['ORS Saline-N','Oral Saline (ওরস্যালাইন)'], ['Orsaline','Oral Saline (ওরস্যালাইন)'],
+  ['Augmentin','Amoxicillin + Clavulanic Acid'], ['Amoxil','Amoxicillin'], ['Zimax','Azithromycin'],
+  ['A-Zith','Azithromycin'], ['Ciprocin','Ciprofloxacin'], ['Flagyl','Metronidazole'],
+  ['Rigix','Cetirizine'], ['Fexo','Fexofenadine'], ['Ventolin','Salbutamol'],
+  ['Obimet','Metformin'], ['Glucophage','Metformin'], ['Diamicron','Gliclazide'],
+  ['Amaryl','Glimepiride'], ['Lipitor','Atorvastatin'], ['Concor','Bisoprolol'],
+  ['Ecosin','Aspirin 75 mg'], ['Disprin','Aspirin 300 mg'], ['Flexi','Aceclofenac'],
+  ['Brufen','Ibuprofen'], ['Arinac','Ibuprofen + Pseudoephedrine'], ['Ondaset','Ondansetron'],
+  ['Zentel','Albendazole'], ['Surbex-Z','Multivitamin + Zinc'], ['Savlon','Antiseptic'],
+  ['Paracetamol','জেনেরিক নাম'], ['Omeprazole','জেনেরিক নাম'], ['Esomeprazole','জেনেরিক নাম'],
+  ['Pantoprazole','জেনেরিক নাম'], ['Rabeprazole','জেনেরিক নাম'], ['Azithromycin','জেনেরিক নাম'],
+  ['Amoxicillin','জেনেরিক নাম'], ['Ciprofloxacin','জেনেরিক নাম'], ['Metronidazole','জেনেরিক নাম'],
+  ['Cetirizine','জেনেরিক নাম'], ['Levocetirizine','জেনেরিক নাম'], ['Loratadine','জেনেরিক নাম'],
+  ['Fexofenadine','জেনেরিক নাম'], ['Montelukast','জেনেরিক নাম'], ['Chlorpheniramine','জেনেরিক নাম'],
+  ['Metformin','জেনেরিক নাম'], ['Glimepiride','জেনেরিক নাম'], ['Gliclazide','জেনেরিক নাম'],
+  ['Losartan','জেনেরিক নাম'], ['Amlodipine','জেনেরিক নাম'], ['Atorvastatin','জেনেরিক নাম'],
+  ['Aspirin','জেনেরিক নাম'], ['Ibuprofen','জেনেরিক নাম'], ['Diclofenac','জেনেরিক নাম'],
+  ['Aceclofenac','জেনেরিক নাম'], ['Domperidone','জেনেরিক নাম'], ['Ondansetron','জেনেরিক নাম'],
+  ['Loperamide','জেনেরিক নাম'], ['Salbutamol','জেনেরিক নাম'], ['Sucralfate','জেনেরিক নাম'],
+  ['Albendazole','জেনেরিক নাম'], ['Prednisolone','জেনেরিক নাম'], ['Dexamethasone','জেনেরিক নাম'],
+];
+
+const mqEl=document.getElementById('mq');
+const msug=document.getElementById('msuggest');
+let sugItems=[], sugIdx=-1;
+
+function hideSuggest(){ msug.classList.remove('open'); sugIdx=-1; }
+function hlMatch(name, s){
+  const i=name.toLowerCase().indexOf(s);
+  if(i<0) return esc(name);
+  return esc(name.slice(0,i))+'<mark>'+esc(name.slice(i,i+s.length))+'</mark>'+esc(name.slice(i+s.length));
+}
+function showSuggest(){
+  const s=mqEl.value.trim().toLowerCase();
+  if(!s){ hideSuggest(); msug.innerHTML=''; return; }
+  const starts=[], other=[];
+  for(const [n,g] of MED_SUGGEST){
+    const ln=n.toLowerCase(), lg=g.toLowerCase();
+    if(ln.startsWith(s)) starts.push([n,g]);
+    else if(ln.includes(s) || lg.includes(s)) other.push([n,g]);
+  }
+  sugItems=starts.concat(other).slice(0,16);
+  sugIdx=-1;
+  if(!sugItems.length){ hideSuggest(); msug.innerHTML=''; return; }
+  msug.innerHTML = sugItems.map(([n,g],i)=>`
+    <div class="sitem" data-i="${i}">
+      <span class="sic">💊</span>
+      <span class="snm">${hlMatch(n,s)}<small>${esc(g)}</small></span>
+      <span class="sgo">🔍</span>
+    </div>`).join('');
+  msug.classList.add('open');
+  msug.querySelectorAll('.sitem').forEach(el=>{
+    el.addEventListener('mousedown', ev=>{ ev.preventDefault(); pickSuggest(Number(el.dataset.i)); });
+    el.addEventListener('mouseenter', ()=>markSel(Number(el.dataset.i)));
+  });
+}
+function markSel(i){
+  sugIdx=i;
+  msug.querySelectorAll('.sitem').forEach((el,j)=>el.classList.toggle('sel', j===i));
+}
+function pickSuggest(i){
+  const it=sugItems[i]; if(!it) return;
+  mqEl.value=it[0];
+  hideSuggest();
+  medSearch(it[0]);
+}
+mqEl.addEventListener('input', showSuggest);
+mqEl.addEventListener('focus', ()=>{ if(mqEl.value.trim()) showSuggest(); });
+mqEl.addEventListener('blur', ()=>setTimeout(hideSuggest,160));
+mqEl.addEventListener('keydown', e=>{
+  if(!msug.classList.contains('open')) return;
+  if(e.key==='ArrowDown'){ e.preventDefault(); markSel(Math.min(sugIdx+1, sugItems.length-1)); }
+  else if(e.key==='ArrowUp'){ e.preventDefault(); markSel(Math.max(sugIdx-1, 0)); }
+  else if(e.key==='Enter' && sugIdx>=0){ e.preventDefault(); pickSuggest(sugIdx); }
+  else if(e.key==='Escape'){ hideSuggest(); }
+});
+
+let mreqId=0;
+async function medSearch(q){
+  const my=++mreqId;
+  const go=document.getElementById('mgo');
+  go.disabled=true;
+  medRenderLoading();
+  try{
+    const res=await fetch('/api/med?q='+encodeURIComponent(q));
+    const text=await res.text();
+    if(my!==mreqId) return;
+    let data;
+    try{ data=JSON.parse(text); }catch(e){ renderNotConnected(text.slice(0,80)); return; }
+    if(data.error){ medRenderError(data.error); return; }
+    medRender(data);
+  }catch(e){
+    if(my===mreqId) renderNotConnected(String(e.message||e));
+  }finally{
+    if(my===mreqId) go.disabled=false;
+  }
+}
+
+function medRenderLoading(){
+  document.getElementById('msummary').style.display='none';
+  document.getElementById('mresults').innerHTML = Object.keys(MED_STORES).map(k=>{
+    const s=MED_STORES[k];
+    return `<section class="store" id="msec-${k}">
+      <div class="shead">
+        <div class="mono" style="background:${s.color}">${s.mono}</div>
+        <div class="t"><b>${s.name}</b><small>${s.site}</small></div>
+        <div class="meta">খোঁজা হচ্ছে…</div>
+      </div>
+      ${skeletonItems()}
+    </section>`;
+  }).join('');
+}
+
+function medRenderError(msg){
+  document.getElementById('mresults').innerHTML =
+    `<div class="hint"><div class="big">⚠️</div><p>${esc(msg)}</p></div>`;
+}
+
+function itemHtml(it){
+  const off = it.oldPrice? Math.round((1-it.price/it.oldPrice)*100) : 0;
+  const inner=`
+    <div class="thumb">${it.image?`<img loading="lazy" src="${esc(it.image)}" onerror="this.parentNode.innerHTML='<span class=&quot;ph&quot;>💊</span>'">`:'<span class="ph">💊</span>'}</div>
+    <div class="iname">
+      <div class="n">${esc(it.name)}</div>
+      <div class="d">${esc([it.unit,it.desc].filter(Boolean).join(' • '))}</div>
+    </div>
+    <div class="pr">
+      <span class="now">${tk(it.price)}</span>
+      ${it.oldPrice?`<div><span class="old">${tk(it.oldPrice)}</span><span class="off">${toBn(off)}% ছাড়</span></div>`:''}
+    </div>`;
+  return it.url? `<a class="item" href="${esc(it.url)}" target="_blank" rel="noopener">${inner}</a>` : `<div class="item">${inner}</div>`;
+}
+
+function medRender(data){
+  const sources=data.sources;
+  const priced=sources.filter(s=>s.ok && s.minPrice!=null);
+  const best=priced.length? Math.min(...priced.map(s=>s.minPrice)) : null;
+  const sum=document.getElementById('msummary');
+  sum.style.display='grid';
+  sum.innerHTML=sources.map(s=>{
+    const st=MED_STORES[s.key];
+    if(!s.ok) return `<div class="stile err"><div class="sn"><span class="dot" style="background:${st.color}"></span>${st.name}</div><div class="sp">ডাটা পাওয়া যায়নি</div></div>`;
+    if(s.count===0) return `<div class="stile err"><div class="sn"><span class="dot" style="background:${st.color}"></span>${st.name}</div><div class="sp">কোনো ঔষধ পাওয়া যায়নি</div></div>`;
+    const isBest = best!=null && s.minPrice===best && priced.filter(x=>x.minPrice===best).length===1;
+    return `<div class="stile ${isBest?'best flash':''}" onclick="document.getElementById('msec-${s.key}').scrollIntoView({behavior:'smooth'})">
+      ${isBest?'<span class="bestbadge">সেরা দাম 🏆</span>':''}
+      <div class="sn"><span class="dot" style="background:${st.color}"></span>${st.name}</div>
+      <div class="sp">${tk(s.minPrice)} <small>থেকে শুরু</small></div>
+    </div>`;
+  }).join('');
+
+  const t = new Date(data.fetchedAt).toLocaleTimeString('bn-BD',{hour:'numeric',minute:'2-digit'});
+  document.getElementById('mresults').innerHTML = sources.map(s=>{
+    const st=MED_STORES[s.key];
+    let body, meta;
+    if(!s.ok){
+      body=`<div class="status err">⚠️ এই সাইট থেকে এখন ডাটা আনা যাচ্ছে না।<br><small>(${esc(s.error||'')})</small></div>`;
+      meta='<b>—</b><br>ঔষধ';
+    } else if(s.count===0){
+      body=`<div class="status">😕 “${esc(data.query)}” এর জন্য কোনো ঔষধ পাওয়া যায়নি।</div>`;
+      meta='<b>০</b><br>ঔষধ';
+    } else {
+      meta=`<b>${toBn(s.count)}</b><br>ঔষধ`;
+      body = sortItemsByRelevance(s.items, data.query).map(itemHtml).join('');
+      if(s.searchUrl) body+=`<a class="more" href="${esc(s.searchUrl)}" target="_blank" rel="noopener">${st.name} সাইটে আরও দেখুন ↗</a>`;
+    }
+    return `<section class="store" id="msec-${s.key}">
+      <div class="shead">
+        <div class="mono" style="background:${s.color}">${s.mono}</div>
+        <div class="t"><b>${st.name}</b><small>${st.site}</small></div>
+        <div class="meta">${meta}</div>
+      </div>
+      ${body}
+    </section>`;
+  }).join('') +
+  `<footer style="margin-top:8px">“${esc(data.query)}” এর দাম সংগ্রহ হয়েছে <b>${t}</b>-এ। ঔষধ সেবনে অবশ্যই রেজিস্টার্ড চিকিৎসকের পরামর্শ নিন।</footer>`;
+}
+</script>
+</body>
+</html>

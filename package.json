@@ -1,0 +1,9 @@
+{
+  "name": "bajardor",
+  "version": "1.0.0",
+  "private": true,
+  "description": "বাজারদর — পণ্যের নাম লিখুন, আজকের দাম জানুন।",
+  "engines": {
+    "node": ">=18"
+  }
+}
