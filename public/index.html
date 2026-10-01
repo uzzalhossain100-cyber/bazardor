@@ -1437,7 +1437,7 @@ function renderRent(d){
         (it.distance!=null?('<span class="km">📏 '+toBn(it.distance)+' কিমি</span>'):'')+
       '</div>'+
       '<div class="rcr-b">'+
-        '<div class="t">'+esc(it.title)+' <span class="srcc '+(it.src==='TT'?'tt':it.src==='TL'?'tl':'bp')+'">'+(it.src==='TL'?'ToletBD':'Bproperty')+'</span></div>'+
+        '<div class="t">'+esc(it.title)+' <span class="srcc '+(it.src==='TT'?'tt':it.src==='TL'?'tl':'bp')+'">'+(it.src==='TT'?'TheTolet.com':it.src==='TL'?'ToletBD':'Bproperty')+'</span></div>'+
         '<div class="rcr-spec">'+(spec||'বিস্তারিত দেখতে চাপ দিন')+'</div>'+
         '<div class="rcr-pr">'+
           '<span class="p">'+tk(it.rent)+'</span><span class="pf">'+esc(it.rentFor||'/মাস')+'</span>'+
