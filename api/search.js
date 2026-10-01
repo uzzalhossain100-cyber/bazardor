@@ -1,7 +1,7 @@
 /**
  * বাজারদর — নিত্যপণ্য সার্চ (Vercel serverless)
  * GET /api/search?q=চাল
- * চারটি গ্রোসারি সাইট থেকে সমান্তরালভাবে দাম এনে তুলনা করে।
+ * ৯টি অনলাইন দোকান থেকে সমান্তরালভাবে দাম এনে তুলনা করে।
  */
 const { SOURCES } = require('./_lib.js');
 
@@ -22,19 +22,42 @@ function buildSourceResult(s, r) {
   };
 }
 
+// সর্বোচ্চ অপেক্ষা — Vercel ফাংশন সীমার নিচে রাখা হয়েছে
+const SOFT_LIMIT = 9500;
+const FAST_LIMIT = 4200; // পর্যাপ্ত ফল পেলে আর দেরি করে না
+const MIN_SETTLED = 7;
+
 module.exports = async function handler(req, res) {
   const q = String((req.query && req.query.q) || '').trim().slice(0, 60);
   if (!q) return res.status(400).json({ error: 'q প্যারামিটার দিন' });
 
   res.setHeader('Cache-Control', 'public, s-maxage=300, stale-while-revalidate=120');
 
-  // নিরাপত্তা-প্রহরী: সার্ভারলেস ফাংশন ১০ সেকেন্ডের বেশি চলতে পারে না
-  const results = await Promise.race([
-    Promise.allSettled(SOURCES.map((s) => s.fetcher(q))),
-    new Promise((resolve) =>
-      setTimeout(() => resolve(SOURCES.map(() => ({ status: 'rejected', reason: new Error('সময় শেষ') }))), 9500)
-    ),
-  ]);
+  // সময় শেষ হওয়ার আগে যেগুলো ফল এসে গেছে সেগুলোই রাখা হয় (যেগুলো ফিরেনি সেগুলোকে "সময় শেষ" ধরা হয়)
+  const settled = new Array(SOURCES.length).fill(null);
+  const tasks = SOURCES.map((s, i) =>
+    Promise.resolve()
+      .then(() => s.fetcher(q))
+      .then((v) => ({ status: 'fulfilled', value: v }))
+      .catch((reason) => ({ status: 'rejected', reason }))
+      .then((r) => { settled[i] = r; return r; })
+  );
+
+  try {
+    const t0 = Date.now();
+    await (async () => {
+      // সকল সোর্স শেষ না হলেও যথেষ্ট ফল এলে তাড়াতাড়ি ফেরা
+      while (Date.now() - t0 < SOFT_LIMIT) {
+        if (settled.every(Boolean)) break;
+        if (settled.filter(Boolean).length >= MIN_SETTLED && Date.now() - t0 >= FAST_LIMIT) break;
+        await new Promise((r) => setTimeout(r, 120));
+      }
+    })();
+  } catch (e) { /* নিরাপত্তা */ }
+
+  const results = SOURCES.map(
+    (s, i) => settled[i] || { status: 'rejected', reason: new Error('সময় শেষ') }
+  );
 
   const data = {
     query: q,

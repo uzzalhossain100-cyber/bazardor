@@ -8,8 +8,8 @@
   :root{
     --bg:#f3f6f4; --card:#ffffff; --ink:#17251f; --muted:#5f7268;
     --line:#e3eae6; --green:#0e6b3f; --green2:#14985b; --gold:#f5b301;
-    --shwapno:#00833e; --chaldal:#009e9a; --agora:#d64027; --meena:#d81b60;
-    --arogga:#6c4bd3; --medex:#0072bc;
+    --shwapno:#00833e; --chaldal:#009e9a; --agora:#d64027; --meena:#d81b60; --dailyshop:#e65100; --cartup:#6b21a8; --othoba:#1a4fa3; --startech:#1c4b8d; --beshideshi:#9c0e23; --sukhibazar:#2e7d32; --kachabazar:#d35400;
+    --arogga:#6c4bd3; --medex:#0072bc; --medeasy:#0f8a5f;
     --radius:16px;
   }
   *{box-sizing:border-box; margin:0; padding:0}
@@ -112,6 +112,17 @@
     background:rgba(0,0,0,.25); padding:6px 10px; border-radius:8px; color:#cfe6c8;
   }
 
+  .appinfo{background:linear-gradient(135deg,#f0fdf4,#eff6ff);border:1px solid #bbf7d0;border-radius:16px;padding:14px 16px;margin-top:16px}
+  .ai-title{font-weight:800;font-size:15px;margin-bottom:8px}
+  .appinfo ul{margin:0;padding-left:0;list-style:none}
+  .appinfo li{font-size:12.8px;color:var(--ink);padding:4px 0;line-height:1.55}
+  .appinfo li b{font-weight:700}
+  .dlmini{display:flex;flex-direction:column;align-items:center;gap:8px;margin-top:18px;background:var(--card);border:1px dashed var(--line);border-radius:14px;padding:14px 12px}
+  .dlbig{display:inline-block;background:var(--brand);color:#fff;text-decoration:none;font-weight:800;font-size:14.5px;border-radius:12px;padding:12px 22px;box-shadow:0 6px 16px rgba(23,58,39,.25)}
+  .dlbig:active{transform:translateY(1px)}
+  .dlmini-qr{border-radius:8px;background:#fff;padding:3px}
+  .dlmini-txt{font-size:11px;color:var(--muted);line-height:1.5;text-align:center}
+
   /* ---------- বাজারদর পেজ ---------- */
   .pagedate{display:flex; align-items:center; gap:8px; color:var(--muted); font-size:13.5px; margin-bottom:12px}
   .pagedate b{background:#e7f2ea; color:#20513a; padding:3px 12px; border-radius:999px; font-weight:600}
@@ -138,7 +149,88 @@
   .searchrow button[type="submit"]:active{transform:scale(.98)}
   .searchrow button[type="submit"][disabled]{opacity:.6; cursor:wait}
 
-  /* ---------- সাজেশন ড্রপডাউন ---------- */
+  .lbox{text-align:center;padding:64px 16px;color:var(--ink)}
+.lbox p{font-weight:800;font-size:16.5px;margin:18px 0 6px}
+.lbox small{color:var(--muted);font-size:12.5px}
+.lspin{width:44px;height:44px;margin:0 auto;border:4px solid var(--bg2);border-top-color:var(--brand);border-radius:50%;animation:lsrot 0.8s linear infinite}
+@keyframes lsrot{to{transform:rotate(360deg)}}
+.scan{position:relative;width:min(300px,84%);margin:4px auto 0;padding:16px 8px;border:1px dashed var(--line);border-radius:16px;background:var(--card);overflow:hidden}
+.shelf{display:flex;justify-content:space-between;font-size:25px}
+.shelf span{display:inline-block;animation:lpop 2.4s ease-in-out infinite;opacity:.6}
+.shelf span:nth-child(2){animation-delay:.3s}
+.shelf span:nth-child(3){animation-delay:.6s}
+.shelf span:nth-child(4){animation-delay:.9s}
+.shelf span:nth-child(5){animation-delay:1.2s}
+@keyframes lpop{0%,100%{transform:scale(.92);opacity:.5}45%{transform:scale(1.2);opacity:1}}
+.beam{position:absolute;top:0;bottom:0;width:60px;background:linear-gradient(90deg,transparent,rgba(27,166,109,.25),transparent);animation:lswp 1.35s ease-in-out infinite;pointer-events:none}
+@keyframes lswp{0%{left:-70px}100%{left:calc(100% + 10px)}}
+.lens{position:absolute;top:50%;margin-top:-15px;font-size:26px;animation:lwalk 2.7s ease-in-out infinite;pointer-events:none;left:0}
+@keyframes lwalk{0%,100%{transform:translateX(6px)}50%{transform:translateX(calc(min(300px,84%) - 60px))}}
+.ltrail{display:inline-block;overflow:hidden;vertical-align:bottom;width:0;animation:ldots 1.4s steps(4) infinite}
+@keyframes ldots{to{width:1.1em}}
+.rsh{display:flex;align-items:center;gap:8px;margin:18px 2px 10px;font-weight:800;font-size:15.5px;color:var(--ink)}
+.rsh .cnt{background:var(--bg2);border:1px solid var(--line);color:var(--muted);font-size:12px;font-weight:700;border-radius:20px;padding:2px 10px}
+.rsh .sc{font-size:11.5px;color:var(--muted);font-weight:500;margin-left:auto}
+.siteb{display:inline-flex;align-items:center;gap:4px;font-weight:700}
+.siteb .dot{width:7px;height:7px;border-radius:50%;display:inline-block}
+.iname .d .siteb{margin-right:4px}
+/* ---------- বাড়িভাড়া পেজ ---------- */
+.rent-note{color:var(--muted);font-size:12px;margin:2px 2px 10px}
+.rloc{background:linear-gradient(135deg,#e8f6ef,#f3fbf7);border:1px solid #cde8d8;border-radius:16px;padding:14px;margin-bottom:10px}
+.rl-ic{font-size:28px;text-align:center;margin-bottom:4px}
+.rl-tx b{font-size:15px}
+.rl-tx p{color:var(--muted);font-size:12.5px;line-height:1.5}
+.rl-btns{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap;justify-content:center}
+.rl-go{background:var(--brand);color:#fff;border:0;border-radius:22px;padding:9px 18px;font-weight:700;font-size:13.5px;cursor:pointer}
+.rl-skip{background:#fff;color:var(--ink);border:1px solid var(--line);border-radius:22px;padding:9px 14px;font-size:12.5px;cursor:pointer}
+.rchip{display:flex;align-items:center;gap:10px;background:#fff;border:1px solid var(--line);border-radius:14px;padding:10px 12px;margin-bottom:10px}
+.rchip .dotptr{font-size:20px}
+.rchip .rc-t{flex:1;line-height:1.25}
+.rchip .rc-t small{display:block;color:var(--brand);font-size:11.5px;font-weight:700}
+.rchip .rc-edit{background:var(--bg2);border:1px solid var(--line);border-radius:10px;width:34px;height:34px;font-size:15px;cursor:pointer}
+.rf{display:flex;gap:8px;margin:4px 0 12px}
+.rf input{flex:1;border:1.5px solid var(--line);border-radius:14px;padding:12px 14px;font-size:14px;background:#fff;outline:none}
+.rf input:focus{border-color:var(--brand)}
+.rf button{background:var(--brand);color:#fff;border:0;border-radius:14px;padding:0 16px;font-weight:700;font-size:13.5px;cursor:pointer;white-space:nowrap}
+.rcr{display:flex;gap:10px;background:#fff;border:1px solid var(--line);border-radius:16px;padding:10px;margin-bottom:10px;cursor:pointer;align-items:stretch}
+.rcr-img{position:relative;flex:none;width:104px;border-radius:12px;overflow:hidden;background:var(--bg2)}
+.rcr-img img{width:100%;height:100%;object-fit:cover;display:block;min-height:100px;max-height:140px}
+.rcr-imgslots{border-radius:12px;width:100%;height:100%;min-height:100px;display:flex;align-items:center;justify-content:center;font-size:30px;color:#c8d2ca}
+.km{position:absolute;top:6px;left:6px;background:rgba(22,163,74,.92);color:#fff;font-size:10.5px;font-weight:800;border-radius:20px;padding:2px 8px}
+.rcr-b{flex:1;min-width:0}
+.rcr-b .t{font-weight:800;font-size:13.5px;line-height:1.35;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;margin-bottom:5px}
+.rcr-spec{display:flex;gap:7px;flex-wrap:wrap;color:var(--ink2);font-size:11.5px;margin-bottom:5px}
+.rcr-spec i{font-style:normal}
+.rcr-pr{display:flex;align-items:baseline;gap:8px;margin-bottom:3px}
+.rcr-pr .p{color:var(--accent2);font-weight:900;font-size:17px}
+.rcr-pr .pf{color:var(--muted);font-size:11px;font-weight:600}
+.rcr-pr .neg{color:#b45309;font-size:10.5px;font-weight:700;background:#fef3c7;border-radius:6px;padding:1px 7px}
+.rcr-loc{color:var(--muted);font-size:11.5px;display:flex;align-items:center;gap:4px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.rcr-avl{margin-top:5px;display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.avl{font-size:10.5px;font-weight:700;background:#dcfce7;color:#166534;border-radius:6px;padding:2px 8px}
+.avl.later{background:#e0e7ff;color:#3730a3}
+.srcr{font-size:10.5px;color:var(--muted);margin-left:auto}
+.rdgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:10px 0}
+.rdcell{background:var(--bg2);border-radius:10px;padding:8px 10px;font-size:12px}
+.rdcell b{display:block;font-size:14px;margin-top:1px}
+.rdcell span{color:var(--muted);font-size:11px}
+.rcustom{background:linear-gradient(135deg,#f5f3ff,#fbfbff);border:1px solid #ddd6fe;border-radius:14px;padding:8px}
+.rstrip{display:flex;gap:6px;overflow-x:auto;scrollbar-width:thin;margin-bottom:10px}
+.rcell{display:flex;flex-direction:column;gap:2px;flex:0 0 auto;min-width:86px}
+.rcell-wide{min-width:132px}
+.rcell-act{min-width:0}
+.rcell label{font-size:10px;color:var(--muted);font-weight:800;white-space:nowrap;padding-left:2px}
+.rcell input,.rcell select{border:1.5px solid var(--line);border-radius:9px;padding:8px 9px;font-size:12.5px;background:#fff;outline:none;width:100%;box-sizing:border-box;height:34px}
+.rcell input:focus,.rcell select:focus{border-color:#7c3aed}
+.rcell .rgo{background:#7c3aed;color:#fff;border:0;border-radius:9px;height:34px;padding:0 16px;font-weight:800;font-size:12.5px;cursor:pointer;white-space:nowrap}
+.rcell .rreset{background:#fff;color:var(--ink);border:1px solid var(--line);border-radius:9px;height:34px;padding:0 12px;font-size:14px;cursor:pointer}
+.srcc{font-size:9px;font-weight:800;border-radius:6px;padding:2px 6px;vertical-align:2px;margin-left:4px;white-space:nowrap}
+.srcc.bp{background:#eef2ff;color:#4f46e5;border:1px solid #c7d2fe}
+.srcc.tl{background:#fff7ed;color:#c2410c;border:1px solid #fed7aa}
+.srcc.tt{background:#ecfdf5;color:#047857;border:1px solid #a7f3d0}
+.rretry{display:flex;align-items:center;gap:8px;background:#fff7ed;border:1px solid #fed7aa;border-radius:12px;padding:10px 12px;margin-bottom:10px;color:#9a3412;font-size:12.5px}
+.rretry button{background:#ea580c;color:#fff;border:0;border-radius:20px;padding:6px 13px;font-weight:700;font-size:12px;cursor:pointer;margin-left:auto;white-space:nowrap}
+/* ---------- সাজেশন ড্রপডাউন ---------- */
   .suggest{
     position:absolute; top:calc(100% + 6px); left:0; right:0; z-index:40;
     background:#fff; border:1px solid var(--line); border-radius:12px;
@@ -207,7 +299,8 @@
     border-bottom:1px dashed #eef3f0; text-decoration:none; transition:background .1s;
   }
   .item:last-child{border-bottom:0}
-  a.item:hover{background:#f6faf7}
+  a.item:hover,div.item:hover{background:#f6faf7}
+  .item{cursor:pointer}
   .thumb{
     width:56px;height:56px;border-radius:11px;background:#f1f5f2;flex:none;
     display:grid;place-items:center;overflow:hidden;border:1px solid #e8efe9;
@@ -230,6 +323,30 @@
     color:var(--green); text-decoration:none; background:#f7fbf8;
   }
   .more:hover{background:#eef7f0}
+
+  /* ইন-পেজ ডিটেইল প্যানেল */
+  .ovl{position:fixed;inset:0;background:rgba(14,22,18,.55);backdrop-filter:blur(2px);z-index:90;display:none;align-items:flex-end;justify-content:center}
+  .ovl.on{display:flex}
+  .sheet{background:var(--card);width:100%;max-width:560px;border-radius:20px 20px 0 0;max-height:86vh;overflow:auto;animation:up .18s ease-out}
+  @keyframes up{from{transform:translateY(30px);opacity:.5}to{transform:none;opacity:1}}
+  .shbar{display:flex;align-items:center;justify-content:space-between;padding:13px 18px;border-bottom:1px solid var(--line);position:sticky;top:0;background:var(--card);border-radius:20px 20px 0 0}
+  .shbar b{font-size:15px}
+  .shbar button{border:0;background:#eef3f0;color:var(--ink);width:34px;height:34px;border-radius:50%;font-size:16px;cursor:pointer}
+  .dimg{height:170px;display:grid;place-items:center;background:#f6f9f7;padding:12px}
+  .dimg img{max-height:145px;max-width:145px;object-fit:contain}
+  .dimg .ph{font-size:52px;opacity:.3}
+  .dbody{padding:16px 18px 24px}
+  .dbody h3{margin:0 0 4px;font-size:18px;line-height:1.35}
+  .dbody .meta{color:var(--muted);font-size:13.5px;margin-bottom:10px}
+  .dprice{display:flex;align-items:baseline;gap:10px;margin:6px 0 14px;flex-wrap:wrap}
+  .dprice b{font-size:26px;color:var(--green)}
+  .dprice s{color:#9aa8a0;font-size:16px}
+  .dprice .off{background:#fdeeda;color:#9a5b00;border-radius:6px;font-size:12px;font-weight:700;padding:2px 8px}
+  .dstore{display:flex;align-items:center;gap:8px;background:#f6faf7;border:1px solid #e6f0e9;border-radius:12px;padding:10px 12px;font-size:13.5px;margin-bottom:14px;flex-wrap:wrap}
+  .dstore .dot{width:10px;height:10px;border-radius:50%;display:inline-block}
+  .dgo{display:block;text-align:center;background:var(--green,#0b9344);color:#fff;text-decoration:none;font-weight:700;font-size:15px;border-radius:12px;padding:13px}
+  .dgo:hover{opacity:.92}
+  .oosb{background:#fde3e0;color:#b3452e;border-radius:6px;font-size:12px;font-weight:700;padding:2px 8px}
 
   /* ---------- স্কেলেটন ---------- */
   .sk{display:flex;gap:13px;align-items:center;padding:12px 18px;border-bottom:1px dashed #eef3f0}
@@ -319,15 +436,21 @@
   <section class="page" id="page-home">
     <div class="hero">
       <h2>পণ্যের নাম লিখুন, <span>আজকের দাম জানুন।</span></h2>
-      <p class="sub">স্বপ্ন, চালডাল, অ্যাগোরা ও মীনা বাজার — চারটি সাইটের দাম একসাথে তুলনা করুন, সাথে জরুরী সেবা ও আরও অনেক কিছু।</p>
+      <p class="sub">নিত্যপণ্য থেকে ঔষধ, বাড়িভাড়া থেকে জরুরী সেবা — সবকিছুর আজকের দাম ও খোঁজ এক জায়গায়।</p>
       <span class="today">📅 <b id="today" style="background:none;padding:0"></b></span>
-      <div><a id="apkBtn" class="apkbtn" href="/bajardor.apk" download>📥 অ্যান্ড্রয়েড অ্যাপ ডাউনলোড করুন (APK)</a></div>
-      <div class="qrcard" id="qrcard">
-        <b>📱 অথবা ফোন দিয়ে এই কোড স্ক্যান করুন — সরাসরি ফোনে ডাউনলোড হবে</b>
-        <img src="/api/qr" onerror="this.onerror=null;this.src='/qr-download.png'" alt="ডাউনলোড QR কোড" width="180" height="180">
-        <small>ফোনের ক্যামেরা খুলে কোডটি ধরুন, লিঙ্কে চাপ দিয়ে ডাউনলোড করুন</small>
-        <span class="dlurl" id="dlurl">বাজারদর ওয়েবসাইট থেকে ডাউনলোড হবে</span>
-      </div>
+    </div>
+    <div class="appinfo">
+      <div class="ai-title">📱 অ্যাপটি কী? কী কী সুবিধা পাবেন</div>
+      <ul>
+        <li>🛒 <b>একই পণ্যের দাম একাধিক দোকানে</b> — কমদামিটা আগে দেখায়</li>
+        <li>💊 <b>ঔষধের দাম ও তথ্য</b> — মজুদদার সোর্স থেকে সরাসরি</li>
+        <li>🏘️ <b>বাড়িভাড়া খোঁজ</b> — আপনার লোকেশনের কাছে হাজারো ভাড়া-বাড়ি, দূরত্ব-ক্রমে সাজানো</li>
+        <li>🚨 <b>জরুরী হেল্পলাইন</b> — জরুরী সংখ্যাগুলো এক জায়গায়</li>
+        <li>⚡ <b>খুব ছোট অ্যাপ (~৭৩ KB)</b> — র‍্যাম/ডাটা কম লাগে, পুরনো ফোনেও করেচালায়</li>
+        <li>🔄 <b>নিজে নিজে আপডেট</b> — নতুন ফিচারের জন্য বারবার ডাউনলোড করতে হয় না</li>
+        <li>📍 <b>লোকেশন-জ্ঞানী</b> — পারমিশন দিলে কাছের ভাড়া-বাড়ি আপনাআপনি আসে</li>
+        <li>🎁 <b>পুরোটাই ফ্রি</b> — কোনো সাবস্ক্রিপশন বা বিজ্ঞাপন নেই</li>
+      </ul>
     </div>
     <div class="featgrid">
       <button class="feat" data-page="bazar">
@@ -350,6 +473,11 @@
         <span class="ic" style="background:#f3e8f7">📞</span>
         <b>যোগাযোগ</b><small>এডমিনের সাথে কথা বলুন</small>
       </button>
+    </div>
+    <div class="dlmini">
+      <a id="apkBtn" class="dlbig" href="/bajardor.apk" download>📥 মোবাইল অ্যাপ ডাউনলোড করুন</a>
+      <img class="dlmini-qr" src="/api/qr" alt="QR" width="52" height="52" onerror="this.remove()">
+      <span class="dlmini-txt">QR স্ক্যানে ফোনে সরাসরি · <span id="dlurl">/bajardor.apk</span></span>
     </div>
   </section>
 
@@ -374,13 +502,7 @@
       <div class="hint">
         <div class="big">🧺</div>
         <p><b>যেকোনো পণ্যের নাম লিখে সার্চ করুন</b> — বাংলায় বা ইংরেজিতে।<br>
-        চারটি সাইটের আজকের দাম নিচে তুলে ধরা হবে।</p>
-        <div class="storegrid">
-          <div class="sbadge"><span class="dot" style="background:var(--shwapno)"></span> স্বপ্ন <small>shwapno.com</small></div>
-          <div class="sbadge"><span class="dot" style="background:var(--chaldal)"></span> চালডাল <small>chaldal.com</small></div>
-          <div class="sbadge"><span class="dot" style="background:var(--agora)"></span> অ্যাগোরা <small>agorasuperstores.com</small></div>
-          <div class="sbadge"><span class="dot" style="background:var(--meena)"></span> মীনা বাজার <small>meenabazaronline.com</small></div>
-        </div>
+        আজকে কোথায় কত দাম — নিচে তুলে ধরা হবে।</p>
       </div>
     </div>
   </section>
@@ -388,7 +510,7 @@
   <!-- ============ ঔষধ পেজ ============ -->
   <section class="page" id="page-medicine" hidden>
     <div class="pagetitle"><span class="pt-ic">💊</span> ঔষধ</div>
-    <p style="color:var(--muted);font-size:13.5px;margin:6px 0 14px">ঔষধের <b>ইংরেজি নাম</b> লিখুন — আরোগা ও মেডেক্স থেকে আজকের দাম দেখুন।</p>
+    <p style="color:var(--muted);font-size:13.5px;margin:6px 0 14px">ঔষধের <b>ইংরেজি নাম</b> লিখুন — আজকের দাম দেখুন।</p>
 
     <div class="searchcard">
       <form class="searchrow" id="mform">
@@ -407,11 +529,7 @@
       <div class="hint">
         <div class="big">💊</div>
         <p><b>ঔষধের ইংরেজি নাম লিখে সার্চ করুন।</b><br>
-        আরোগা ও মেডেক্স — দুটি সাইটের দাম নিচে তুলে ধরা হবে।</p>
-        <div class="storegrid" style="grid-template-columns:repeat(2,1fr);max-width:440px;margin-left:auto;margin-right:auto">
-          <div class="sbadge"><span class="dot" style="background:var(--arogga)"></span> আরোগা <small>arogga.com</small></div>
-          <div class="sbadge"><span class="dot" style="background:var(--medex)"></span> মেডেক্স <small>medex.com.bd</small></div>
-        </div>
+        আজকের দাম ও মজুদ নিচে তুলে ধরা হবে।</p>
       </div>
     </div>
   </section>
@@ -419,11 +537,47 @@
   <!-- ============ বাড়িভাড়া পেজ ============ -->
   <section class="page" id="page-rent" hidden>
     <div class="pagetitle"><span class="pt-ic">🏘️</span> বাড়িভাড়া</div>
-    <div class="soon" style="margin-top:16px">
-      <div class="big">🏘️</div>
-      <h3>বাড়িভাড়া বিভাগ — শীঘ্রই আসছে</h3>
-      <p>এই বিভাগে এলাকাভিত্তিক বাড়িভাড়ার তথ্য ও খোঁজ খুঁজির সুবিধা যুক্ত করা হবে।</p>
+    <p class="rent-note">উৎস: Bproperty.com, TheToletBD.com ও TheTolet.com — সক্রিয় ও যাচাইকৃত ভাড়া-লিস্টিং, প্রতিবার তাজা।</p>
+
+    <div id="rentTopZone"></div>
+    <div class="rcustom rstrip" id="rentCustom">
+      <div class="rcell rcell-wide">
+        <label>📍 স্থান</label>
+        <input id="rentQ" type="search" placeholder="উত্তরা, Gulshan…">
+      </div>
+      <div class="rcell">
+        <label>🛏 বেডরুম</label>
+        <select id="rentBeds"><option value="">যেকোনো</option><option value="1">১</option><option value="2">২</option><option value="3">৩</option><option value="4">৪</option><option value="5">৫+</option></select>
+      </div>
+      <div class="rcell">
+        <label>🚿 বাথরুম</label>
+        <select id="rentBaths"><option value="">যেকোনো</option><option value="1">১</option><option value="2">২</option><option value="3">৩</option><option value="4">৪</option><option value="5">৫+</option></select>
+      </div>
+      <div class="rcell">
+        <label>৳ ভাড়া থেকে</label>
+        <input id="rentMin" type="number" inputmode="numeric" min="0" placeholder="৮০০০">
+      </div>
+      <div class="rcell">
+        <label>৳ ভাড়া পর্যন্ত</label>
+        <input id="rentMax" type="number" inputmode="numeric" min="0" placeholder="৩০০০০">
+      </div>
+      <div class="rcell rcell-wide">
+        <label>🗓 মাস-বছর থেকে</label>
+        <select id="rentMonth"></select>
+      </div>
+      <div class="rcell rcell-act">
+        <label>&nbsp;</label>
+        <button class="rgo" id="rentGo" type="button">🔍 খুঁজুন</button>
+      </div>
+      <div class="rcell rcell-act">
+        <label>&nbsp;</label>
+        <button class="rreset" id="rentReset" type="button" aria-label="রিসেট" title="রিসেট">↺</button>
+      </div>
     </div>
+
+    <div id="rentMsg"></div>
+    <div id="rentResults"></div>
+
   </section>
 
   <!-- ============ জরুরী সেবা পেজ ============ -->
@@ -522,6 +676,8 @@ function showPage(key){
   const bb=document.getElementById('backBtn');
   if(bb) bb.hidden = (key==='home');
   window.scrollTo(0,0);
+  // বাড়িভাড়া পেজে ঢুকলেই অটো লোকেশন (যে পথেই আসুক)
+  if(key==='rent') setTimeout(()=>{ try{ rentKickstart(); }catch(e){} },80);
 }
 function goPage(key){
   if(location.hash === '#'+key){ showPage(key); }
@@ -550,7 +706,7 @@ if(/^https?:$/.test(location.protocol)){
 }
 
 // অ্যাপের ভেতরে (APK) ডাউনলোড বাটন/কোড দেখানোর দরকার নেই
-if(location.host === 'bajardor.app'){
+if(location.host === 'bajardor.app' || /BazarDorApp/i.test(navigator.userAgent)){
   const ab=document.getElementById('apkBtn'); if(ab) ab.style.display='none';
   const qc=document.getElementById('qrcard'); if(qc) qc.style.display='none';
 }
@@ -561,6 +717,13 @@ const STORES = {
   chaldal:{name:'চালডাল', site:'chaldal.com', color:'var(--chaldal)', mono:'চা'},
   agora:{name:'অ্যাগোরা', site:'agorasuperstores.com', color:'var(--agora)', mono:'অ্যা'},
   meena:{name:'মীনা বাজার', site:'meenabazaronline.com', color:'var(--meena)', mono:'মী'},
+  dailyshop:{name:'ডেইলি শপিং', site:'dailyshoppingbd.com', color:'var(--dailyshop)', mono:'ডে'},
+  cartup:{name:'কার্টাপ', site:'cartup.com', color:'var(--cartup)', mono:'কা'},
+  othoba:{name:'ওথোবা', site:'othoba.com', color:'var(--othoba)', mono:'ও'},
+  startech:{name:'স্টার টেক', site:'startech.com.bd', color:'var(--startech)', mono:'স্টা', noAliasBoost:true},
+  beshideshi:{name:'বেশিদেশি', site:'beshideshi.com', color:'var(--beshideshi)', mono:'বে', noAliasBoost:true},
+  sukhibazar:{name:'সুখীবাজার', site:'sukhibazar.com', color:'var(--sukhibazar)', mono:'সু'},
+  kachabazar:{name:'কাঁচাবাজার', site:'kachabazar.com.bd', color:'var(--kachabazar)', mono:'কাঁ'},
 };
 const CHIP_LIST = ['চাল','ডিম','পেঁয়াজ','আলু','সয়াবিন তেল','মুরগি','দুধ','চিনি','মসুর ডাল','ইলিশ'];
 
@@ -755,20 +918,47 @@ function skeletonItems(){
     </div>`).join('');
 }
 
+function animScene(kind){
+  const ICONS={groc:'🍚 🥛 🍞 🥔 🧅', med:'💊 💉 🧴 🩹 💊', rent:'🏠 🏢 🏘️ 🏡 🏢'};
+  const icons = ICONS[kind]||ICONS.groc;
+  return `<div class="scan">
+      <div class="beam"></div>
+      <div class="lens">🔍</div>
+      <div class="shelf">${icons.split(' ').map(i=>`<span>${i}</span>`).join('')}</div>
+    </div>`;
+}
 function renderLoading(q){
-  const keys=Object.keys(STORES);
+  const n=Object.keys(STORES).length;
   document.getElementById('summary').style.display='none';
-  document.getElementById('results').innerHTML = keys.map(k=>{
-    const s=STORES[k];
-    return `<section class="store" id="sec-${k}">
-      <div class="shead">
-        <div class="mono" style="background:${s.color}">${s.mono}</div>
-        <div class="t"><b>${s.name}</b><small>${s.site}</small></div>
-        <div class="meta">খোঁজা হচ্ছে…</div>
-      </div>
-      ${skeletonItems()}
-    </section>`;
-  }).join('');
+  document.getElementById('results').innerHTML=
+    `<div class="lbox">${animScene('groc')}
+      <p>“${esc(q)}” সার্চ হচ্ছে<span class="ltrail">...</span></p>
+      <small>${toBn(n)}টা অনলাইন দোকান একই সাথে খুঁজছি ⏳</small>
+    </div>`;
+}
+function medRenderLoading(q){
+  const n=Object.keys(MED_STORES).length;
+  document.getElementById('msummary').style.display='none';
+  document.getElementById('mresults').innerHTML=
+    `<div class="lbox">${animScene('med')}
+      <p>“${esc(q)}” সার্চ হচ্ছে<span class="ltrail">...</span></p>
+      <small>${toBn(n)}টা অনলাইন ফার্মেসি একই সাথে খুঁজছি ⏳</small>
+    </div>`;
+}
+function rowHtmlG(it,st,ph){
+  const off = it.oldPrice? Math.round((1-it.price/it.oldPrice)*100) : 0;
+  return `<div class="item" onclick="showDetail(${regItem(it,st)})">
+    <div class="thumb">${it.image?`<img loading="lazy" src="${esc(it.image)}" onerror="this.parentNode.innerHTML='<span class=&quot;ph&quot;>${ph}</span>'">`:'<span class="ph">'+ph+'</span>'}</div>
+    <div class="iname">
+      <div class="n">${esc(it.name)}</div>
+      <div class="d"><span class="siteb"><span class="dot" style="background:${st.color}"></span>${esc(st.name)}</span>${[it.unit,it.desc].filter(Boolean).length?' • '+esc([it.unit,it.desc].filter(Boolean).join(' • ')):''}</div>
+    </div>
+    <div class="pr">
+      ${it.outOfStock?'<span class="oos">স্টক নেই</span> ':''}
+      <span class="now">${tk(it.price)}</span>
+      ${it.oldPrice?`<div><span class="old">${tk(it.oldPrice)}</span><span class="off">${toBn(off)}% ছাড়</span></div>`:''}
+    </div>
+  </div>`;
 }
 
 function renderError(msg){
@@ -787,6 +977,29 @@ function relevanceScore(name, q){
   if(n.includes(s)) return 3;
   return 4;
 }
+/* ---------- ইন-পেজ ডিটেইল ---------- */
+let _diNo=0; const _dmap={};
+function regItem(it,st){ _dmap['i'+(++_diNo)]=[it,st]; return _diNo; }
+function showDetail(id){
+  const rec=_dmap['i'+id]; if(!rec) return;
+  const [it,st]=rec;
+  const off=it.oldPrice?Math.round((1-it.price/it.oldPrice)*100):0;
+  document.getElementById('dStore').innerHTML=`<span class="dot" style="background:${st.color};width:10px;height:10px;border-radius:50%;display:inline-block;margin-right:6px"></span>${esc(st.name)} <small style="color:var(--muted);font-weight:400">${esc(st.site)}</small>`;
+  document.getElementById('dImg').innerHTML=it.image?`<img src="${esc(it.image)}" onerror="this.parentNode.innerHTML='<span class=ph>🛒</span>'">`:'<span class="ph">🛒</span>';
+  document.getElementById('dBody').innerHTML=`
+    <h3>${esc(it.name)}</h3>
+    <div class="meta">${esc([it.unit,it.desc].filter(Boolean).join(' • '))||'—'}</div>
+    ${it.outOfStock?'<div style="margin-bottom:8px"><span class="oosb">এই মুহূর্তে স্টক নেই</span></div>':''}
+    <div class="dprice"><b>${tk(it.price)}</b>${it.oldPrice?`<s>${tk(it.oldPrice)}</s><span class="off">${toBn(off)}% ছাড়</span>`:''}</div>
+    <div class="dstore"><span class="dot" style="background:${st.color}"></span> এই দাম <b>${esc(st.name)}</b> (${esc(st.site)}) সাইট থেকে আজকে সংগৃহীত</div>
+    ${it.url?`<a class="dgo" href="${esc(it.url)}" target="_blank" rel="noopener">${esc(st.name)} সাইটে পণ্যটি দেখুন ↗</a>`:'<div class="meta">সরাসরি লিংক পাওয়া যায়নি</div>'}
+  `;
+  document.getElementById('dOvl').classList.add('on');
+  document.body.style.overflow='hidden';
+}
+function closeDetail(){ document.getElementById('dOvl').classList.remove('on'); document.body.style.overflow=''; }
+document.addEventListener('keydown',e=>{ if(e.key==='Escape') closeDetail(); });
+
 function sortItemsByRelevance(items, q){
   return items
     .map((it,i)=>({it,i,s:relevanceScore(it.name,q)}))
@@ -798,69 +1011,89 @@ function render(data){
   const sources=data.sources;
   const byKey={}; sources.forEach(s=>byKey[s.key]=s);
 
-  // --- তুলনা স্ট্রিপ ---
-  const priced=sources.filter(s=>s.ok && s.minPrice!=null);
-  const best=priced.length? Math.min(...priced.map(s=>s.minPrice)) : null;
-  const sum=document.getElementById('summary');
-  sum.style.display='grid';
-  sum.innerHTML=sources.map(s=>{
-    const st=STORES[s.key];
-    if(!s.ok) return `<div class="stile err"><div class="sn"><span class="dot" style="background:${st.color}"></span>${st.name}</div><div class="sp">ডাটা পাওয়া যায়নি</div></div>`;
-    if(s.count===0) return `<div class="stile err"><div class="sn"><span class="dot" style="background:${st.color}"></span>${st.name}</div><div class="sp">কোনো পণ্য পাওয়া যায়নি</div></div>`;
-    const isBest = best!=null && s.minPrice===best && priced.filter(x=>x.minPrice===best).length===1;
-    return `<div class="stile ${isBest?'best flash':''}" onclick="document.getElementById('sec-${s.key}').scrollIntoView({behavior:'smooth'})">
-      ${isBest?'<span class="bestbadge">সেরা দাম 🏆</span>':''}
-      <div class="sn"><span class="dot" style="background:${st.color}"></span>${st.name}</div>
-      <div class="sp">${tk(s.minPrice)} <small>থেকে শুরু</small></div>
-    </div>`;
-  }).join('');
+  // সামারি স্ট্রিপ সরি_য়ে দেওয়া হয়েছে (ব্যবহারকারীর সিদ্ধান্ত)
+  document.getElementById('summary').style.display='none';
 
-  // --- বিস্তারিত ---
+  // --- বিস্তারিত (দুই ভাগে: এক্সাক্ট ম্যাচ আগে, তারপর অনুরূপ) ---
   const t = new Date(data.fetchedAt).toLocaleTimeString('bn-BD',{hour:'numeric',minute:'2-digit'});
-  document.getElementById('results').innerHTML = sources.map(s=>{
-    const st=STORES[s.key];
-    let body, meta;
-    if(!s.ok){
-      body=`<div class="status err">⚠️ এই সাইট থেকে এখন ডাটা আনা যাচ্ছে না।<br><small>(${esc(s.error||'')})</small></div>`;
-      meta='<b>—</b><br>পণ্য';
-    } else if(s.count===0){
-      body=`<div class="status">😕 “${esc(data.query)}” এর জন্য কোনো পণ্য পাওয়া যায়নি। অন্য নামে খুঁজে দেখুন।</div>`;
-      meta='<b>০</b><br>পণ্য';
-    } else {
-      meta=`<b>${toBn(s.count)}${s.count>=12?'+':''}</b><br>পণ্য`;
-      body = sortItemsByRelevance(s.items, s.translatedQuery || data.query).map(it=>{
-        const off = it.oldPrice? Math.round((1-it.price/it.oldPrice)*100) : 0;
-        const inner=`
-          <div class="thumb">${it.image?`<img loading="lazy" src="${esc(it.image)}" onerror="this.parentNode.innerHTML='<span class=&quot;ph&quot;>🛒</span>'">`:'<span class="ph">🛒</span>'}</div>
-          <div class="iname">
-            <div class="n">${esc(it.name)}</div>
-            <div class="d">${esc([it.unit,it.desc].filter(Boolean).join(' • '))}</div>
-          </div>
-          <div class="pr">
-            ${it.outOfStock?'<span class="oos">স্টক নেই</span> ':''}
-            <span class="now">${tk(it.price)}</span>
-            ${it.oldPrice?`<div><span class="old">${tk(it.oldPrice)}</span><span class="off">${toBn(off)}% ছাড়</span></div>`:''}
-          </div>`;
-        return it.url? `<a class="item" href="${esc(it.url)}" target="_blank" rel="noopener">${inner}</a>` : `<div class="item">${inner}</div>`;
-      }).join('');
-      if(s.searchUrl) body+=`<a class="more" href="${esc(s.searchUrl)}" target="_blank" rel="noopener">${st.name} সাইটে আরও দেখুন ↗</a>`;
-    }
-    return `<section class="store" id="sec-${s.key}">
-      <div class="shead">
-        <div class="mono" style="background:${st.color}">${st.mono}</div>
-        <div class="t"><b>${st.name}</b><small>${st.site}${s.translatedQuery?` • সার্চ হয়েছে: “${esc(s.translatedQuery)}”`:''}</small></div>
-        <div class="meta">${meta}</div>
-      </div>
-      ${body}
-    </section>`;
-  }).join('') +
-  `<footer style="margin-top:8px">“${esc(data.query)}” এর জন্য দাম সংগ্রহ করা হয়েছে <b>${t}</b>-এ${data.fromCache?` (ক্যাশ থেকে, ${toBn(data.ageSec)} সেকেন্ড আগের)`:''}।</footer>`;
+
+  // বাংলা কোয়েরির ইংরেজি রূপগুলো (সোর্সগুলো যে অনুবাদে সার্চ করেছে) — ক্রস-ভাষা ম্যাচের জন্য
+  const aliases=[...new Set(data.sources.map(s=>s.translatedQuery).filter(Boolean))];
+  const parts=partitionResults(data, aliases, null);
+
+  // সম্পূর্ণ সারি বিল্ডার শেয়ার্ড: rowHtmlG(it, st, ph)
+
+  let out='';
+  // ভাগ ১: এক্সাক্ট ম্যাচ — নামম খুব ম্যাচ, সস্তা আগে
+  out+=`<div class="rsh">🔍 আপনার খোঁজকৃত পণ্য <span class="cnt">${toBn(parts.exact.length)}</span><span class="sc">মিলের হারে সাজানো</span></div>`;
+  out+= parts.exact.length
+    ? `<section class="store">${parts.exact.map(r=>rowHtmlG(r.it,r.st,'🛒')).join('')}</section>`
+    : `<div class="hint" style="margin:0 2px"><p>“${esc(data.query)}” নামে সরাসরি পণ্য পাওয়া যায়নি — নিচের অনুরূপগুলো দেখুন।</p></div>`;
+
+  // ভাগ ২: অনুরূপ পণ্য — মিলের সংখ্যা আগে, তারপর দাম
+  if(parts.similar.length){
+    out+=`<div class="rsh">🔁 অনুরূপ পণ্য <span class="cnt">${toBn(parts.similar.length)}</span></div>`;
+    out+=`<section class="store">${parts.similar.map(r=>rowHtmlG(r.it,r.st,'🛒')).join('')}</section>`;
+  }
+
+  out+=`<footer style="margin-top:8px">“${esc(data.query)}” এর জন্য ${toBn(parts.exact.length+parts.similar.length)}টি পণ্যের দাম সংগ্রহ করা হয়েছে <b>${t}</b>-এ${data.fromCache?` (ক্যাশ থেকে, ${toBn(data.ageSec)} সেকেন্ড আগের)`:''}।</footer>`;
+  document.getElementById('results').innerHTML=out;
+}
+
+/* ---------- ফলাফল বিচ্ছিন্নকরণ: এক্সাক্ট / অনুরূপ ---------- */
+function normTxt(x){
+  return String(x||'').toLowerCase().normalize('NFKC')
+    .replace(/[^a-z0-9ঀ-৿]+/g,' ').trim();
+}
+function matchPct(name, terms, altTerms, qn){
+  const n=normTxt(name), nb=' '+n+' ';
+  if(!n) return {pct:0,hitT:[],hitA:[]};
+  if(n===qn) return {pct:100,hitT:terms,hitA:altTerms};
+  const hitT=terms.filter(w=>nb.includes(w));
+  const hitA=altTerms.filter(w=>nb.includes(w));
+  const total=terms.length||1;
+  const covered=Math.max(hitT.length,hitA.length);
+  let pct=Math.round(covered/total*100);
+  // সম্পূর্ণ বাক্যাংশ যাতে পাওয়া যায় → শক্ত ধাক্কা
+  if(nb.includes(qn)) pct=Math.max(pct, 95);
+  else if(nb.startsWith(' '+qn)) pct=97; // startsWith অর্থাৎ সীমানায়
+  if(n.startsWith(qn)) pct=Math.max(pct,98);
+  if(n===qn) pct=100;
+  return {pct, hitT, hitA};
+}
+function partitionResults(data, aliases, storesMap){
+  const qn=normTxt(data.query);
+  const terms=qn.split(/\s+/).filter(w=>w.length>=2);
+  const altTerms=normTxt(aliases.join(' ')).split(/\s+/).filter(w=>w.length>=2);
+  const exact=[], similar=[], seen=new Set();
+
+  data.sources.forEach(s=>{
+    if(!s.ok) return;
+    const st=(storesMap||STORES)[s.key]; if(!st) return;
+    s.items.forEach(it=>{
+      const key=s.key+'|'+normTxt(it.name)+'|'+it.price;
+      if(seen.has(key)) return; seen.add(key);
+      const m=matchPct(it.name, terms, altTerms, qn);
+      const aliasExact = !st.noAliasBoost;
+      const isExact = terms.length>0
+        ? (m.pct>=100 || m.hitT.length===terms.length || (aliasExact && altTerms.length>0 && m.hitA.length>=Math.min(2,altTerms.length) && m.hitT.length===0))
+        : m.hitA.length>0;
+      const rec={it,st,pct:m.pct,price:it.price??Infinity};
+      if(isExact) exact.push(rec); else similar.push(rec);
+    });
+  });
+
+  // মিল-শতাংশ আগে (বেশি আগে), সমান হলে সস্তা আগে
+  const rank=(a,b)=> (b.pct-a.pct) || (a.price-b.price) || (a.it.name.length-b.it.name.length);
+  exact.sort(rank); similar.sort(rank);
+  return {exact:exact.slice(0,30), similar:similar.slice(0,40)};
 }
 
 /* ------------------------- ঔষধ পেজ লজিক ------------------------- */
 const MED_STORES = {
   arogga:{name:'আরোগা', site:'arogga.com', color:'var(--arogga)', mono:'আ'},
   medex:{name:'মেডেক্স', site:'medex.com.bd', color:'var(--medex)', mono:'মে'},
+  medeasy:{name:'মেডিজি', site:'medeasy.health', color:'var(--medeasy)', mono:'জি'},
 };
 const MED_CHIPS = ['Napa','Augmentin','Seclo','Cetirizine','Amoxil','Napa Extend','Rigix','Zimax'];
 
@@ -965,7 +1198,7 @@ async function medSearch(q){
   const my=++mreqId;
   const go=document.getElementById('mgo');
   go.disabled=true;
-  medRenderLoading();
+  medRenderLoading(q);
   try{
     const res=await fetch('/api/med?q='+encodeURIComponent(q));
     const text=await res.text();
@@ -981,27 +1214,12 @@ async function medSearch(q){
   }
 }
 
-function medRenderLoading(){
-  document.getElementById('msummary').style.display='none';
-  document.getElementById('mresults').innerHTML = Object.keys(MED_STORES).map(k=>{
-    const s=MED_STORES[k];
-    return `<section class="store" id="msec-${k}">
-      <div class="shead">
-        <div class="mono" style="background:${s.color}">${s.mono}</div>
-        <div class="t"><b>${s.name}</b><small>${s.site}</small></div>
-        <div class="meta">খোঁজা হচ্ছে…</div>
-      </div>
-      ${skeletonItems()}
-    </section>`;
-  }).join('');
-}
-
 function medRenderError(msg){
   document.getElementById('mresults').innerHTML =
     `<div class="hint"><div class="big">⚠️</div><p>${esc(msg)}</p></div>`;
 }
 
-function itemHtml(it){
+function itemHtml(it,st){
   const off = it.oldPrice? Math.round((1-it.price/it.oldPrice)*100) : 0;
   const inner=`
     <div class="thumb">${it.image?`<img loading="lazy" src="${esc(it.image)}" onerror="this.parentNode.innerHTML='<span class=&quot;ph&quot;>💊</span>'">`:'<span class="ph">💊</span>'}</div>
@@ -1013,53 +1231,269 @@ function itemHtml(it){
       <span class="now">${tk(it.price)}</span>
       ${it.oldPrice?`<div><span class="old">${tk(it.oldPrice)}</span><span class="off">${toBn(off)}% ছাড়</span></div>`:''}
     </div>`;
-  return it.url? `<a class="item" href="${esc(it.url)}" target="_blank" rel="noopener">${inner}</a>` : `<div class="item">${inner}</div>`;
+  return `<div class="item" onclick="showDetail(${regItem(it,st)})">${inner}</div>`;
 }
 
 function medRender(data){
-  const sources=data.sources;
-  const priced=sources.filter(s=>s.ok && s.minPrice!=null);
-  const best=priced.length? Math.min(...priced.map(s=>s.minPrice)) : null;
-  const sum=document.getElementById('msummary');
-  sum.style.display='grid';
-  sum.innerHTML=sources.map(s=>{
-    const st=MED_STORES[s.key];
-    if(!s.ok) return `<div class="stile err"><div class="sn"><span class="dot" style="background:${st.color}"></span>${st.name}</div><div class="sp">ডাটা পাওয়া যায়নি</div></div>`;
-    if(s.count===0) return `<div class="stile err"><div class="sn"><span class="dot" style="background:${st.color}"></span>${st.name}</div><div class="sp">কোনো ঔষধ পাওয়া যায়নি</div></div>`;
-    const isBest = best!=null && s.minPrice===best && priced.filter(x=>x.minPrice===best).length===1;
-    return `<div class="stile ${isBest?'best flash':''}" onclick="document.getElementById('msec-${s.key}').scrollIntoView({behavior:'smooth'})">
-      ${isBest?'<span class="bestbadge">সেরা দাম 🏆</span>':''}
-      <div class="sn"><span class="dot" style="background:${st.color}"></span>${st.name}</div>
-      <div class="sp">${tk(s.minPrice)} <small>থেকে শুরু</small></div>
-    </div>`;
-  }).join('');
-
+  document.getElementById('msummary').style.display='none';
   const t = new Date(data.fetchedAt).toLocaleTimeString('bn-BD',{hour:'numeric',minute:'2-digit'});
-  document.getElementById('mresults').innerHTML = sources.map(s=>{
-    const st=MED_STORES[s.key];
-    let body, meta;
-    if(!s.ok){
-      body=`<div class="status err">⚠️ এই সাইট থেকে এখন ডাটা আনা যাচ্ছে না।<br><small>(${esc(s.error||'')})</small></div>`;
-      meta='<b>—</b><br>ঔষধ';
-    } else if(s.count===0){
-      body=`<div class="status">😕 “${esc(data.query)}” এর জন্য কোনো ঔষধ পাওয়া যায়নি।</div>`;
-      meta='<b>০</b><br>ঔষধ';
-    } else {
-      meta=`<b>${toBn(s.count)}</b><br>ঔষধ`;
-      body = sortItemsByRelevance(s.items, data.query).map(itemHtml).join('');
-      if(s.searchUrl) body+=`<a class="more" href="${esc(s.searchUrl)}" target="_blank" rel="noopener">${st.name} সাইটে আরও দেখুন ↗</a>`;
-    }
-    return `<section class="store" id="msec-${s.key}">
-      <div class="shead">
-        <div class="mono" style="background:${s.color}">${s.mono}</div>
-        <div class="t"><b>${st.name}</b><small>${st.site}</small></div>
-        <div class="meta">${meta}</div>
-      </div>
-      ${body}
-    </section>`;
-  }).join('') +
-  `<footer style="margin-top:8px">“${esc(data.query)}” এর দাম সংগ্রহ হয়েছে <b>${t}</b>-এ। ঔষধ সেবনে অবশ্যই রেজিস্টার্ড চিকিৎসকের পরামর্শ নিন।</footer>`;
+  const parts=partitionResults(data, [], MED_STORES);
+
+  let out='';
+  out+=`<div class="rsh">🔍 আপনার খোঁজকৃত ঔষধ <span class="cnt">${toBn(parts.exact.length)}</span><span class="sc">মিলের হারে সাজানো</span></div>`;
+  out+= parts.exact.length
+    ? `<section class="store">${parts.exact.map(r=>rowHtmlG(r.it,r.st,'💊')).join('')}</section>`
+    : `<div class="hint" style="margin:0 2px"><p>“${esc(data.query)}” নামে সরাসরি ঔষধ পাওয়া যায়নি — নিচের অনুরূপগুলো দেখুন।</p></div>`;
+  if(parts.similar.length){
+    out+=`<div class="rsh">🔁 অনুরূপ ঔষধ <span class="cnt">${toBn(parts.similar.length)}</span></div>`;
+    out+=`<section class="store">${parts.similar.map(r=>rowHtmlG(r.it,r.st,'💊')).join('')}</section>`;
+  }
+  out+=`<footer style="margin-top:8px">“${esc(data.query)}” এর ${toBn(parts.exact.length+parts.similar.length)}টি অপশনের দাম সংগ্রহ হয়েছে <b>${t}</b>-এ। ঔষধ সেবনে অবশ্যই রেজিস্টার্ড চিকিৎসকের পরামর্শ নিন।</footer>`;
+  document.getElementById('mresults').innerHTML=out;
 }
+
+/* ===================== বাড়িভাড়া পেজ (খুললেই অটো-লোকেশন + কাস্টম সার্চ) ===================== */
+const rentState={geo:'idle',lat:null,lng:null,label:'',nearest:'',started:false,safetyTimer:0};
+let _riNo=0; const _rmap={};
+function regRent(it){ _rmap['r'+(++_riNo)]=it; return _riNo; }
+
+document.addEventListener('click',e=>{
+  if(e.target.closest('[data-page="rent"]')) setTimeout(rentKickstart,60);
+  const t=e.target;
+  if(!t||!t.id) return;
+  if(t.id==='rentGo') rentFetch();
+  else if(t.id==='rentReset') rentReset();
+  else if(t.id==='rentRetry'){ rentState.started=false; rentState.geo='idle'; rentAutoGeo(); }
+  else if(t.id==='rentLocEdit'){ rentState.started=false; rentState.geo='idle'; rentAutoGeo(); }
+});
+
+function rentKickstart(){
+  const fm=document.getElementById('rentMonth');
+  if(fm&&!fm.dataset.ready){ rentFillMonths(); fm.dataset.ready='1'; }
+  if(!rentState.started){
+    // প্রথমবার: পুরো অটো-লোকেশন ফ্লো (কার্ড/লোডিং সহ)
+    rentState.started=true;
+    rentAutoGeo();
+  }else if(rentState.geo==='ok' && navigator.geolocation){
+    // পরবর্তী প্রবেশ: নীরবে লোকেশন রিফ্রেশ, বেশি সরে গেলে নতুন ফল
+    navigator.geolocation.getCurrentPosition(pos=>{
+      const la=+pos.coords.latitude.toFixed(5), ln=+pos.coords.longitude.toFixed(5);
+      if(Math.abs(la-rentState.lat)>0.003 || Math.abs(ln-rentState.lng)>0.003){
+        rentState.lat=la; rentState.lng=ln; rentFetch();
+      }
+    },()=>{},{timeout:8000, maximumAge:60000, enableHighAccuracy:false});
+  }else if(rentState.geo==='denied'){
+    rentAutoGeo(); // আগে অনুমতি না-পেলে আবার চেষ্টা
+  }
+}
+
+const BMON=['জানুয়ারি','ফেব্রুয়ারি','মার্চ','এপ্রিল','মে','জুন','জুলাই','আগস্ট','সেপ্টেম্বর','অক্টোবর','নভেম্বর','ডিসেম্বর'];
+function rentFillMonths(){
+  const sel=document.getElementById('rentMonth');
+  const now=new Date();
+  let opts='<option value="">যেকোনো / এখনই থেকে</option>';
+  for(let i=0;i<13;i++){
+    const d=new Date(now.getFullYear(), now.getMonth()+i, 1);
+    opts+=`<option value="${d.getFullYear()}-${d.getMonth()+1}">🗓️ ${BMON[d.getMonth()]} ${toBn(d.getFullYear())}</option>`;
+  }
+  sel.innerHTML=opts;
+}
+
+/* ---------- পেজে ঢুকলেই অটো লোকেশন ---------- */
+function rentAutoGeo(){
+  rentState.started=true;
+  rentRenderTop('ask');
+  rentLoadingAnim('আপনার লোকেশন পেলেই এখানকার কাছের বাড়ি দেখাবো…');
+  if(!navigator.geolocation){ rentState.geo='denied'; rentRenderTop('denied'); rentFetch(); return; }
+  clearTimeout(rentState.safetyTimer);
+  navigator.geolocation.getCurrentPosition(rentGeoOk, rentGeoNo, {timeout:12000, maximumAge:300000, enableHighAccuracy:false});
+  rentState.safetyTimer=setTimeout(()=>{
+    if(rentState.geo!=='ok'){ rentState.geo='denied'; rentRenderTop('denied'); if(!document.querySelector('#rentResults .rcr')) rentFetch(); }
+  },16000);
+}
+
+async function rentGeoOk(pos){
+  rentState.lat=+pos.coords.latitude.toFixed(5);
+  rentState.lng=+pos.coords.longitude.toFixed(5);
+  rentState.geo='ok';
+  clearTimeout(rentState.safetyTimer);
+  rentLoadingAnim('আপনার এলাকা শনাক্ত করা হচ্ছে…');
+  let label='';
+  try{
+    const g=await fetch('/api/geo?lat='+rentState.lat+'&lng='+rentState.lng).then(r=>r.json());
+    if(g.ok){ label=g.label||''; rentState.nearest=g.nearestKnownArea||''; }
+  }catch(e){}
+  rentState.label=label||(+rentState.lat).toFixed(3)+', '+(+rentState.lng).toFixed(3);
+  rentRenderTop('ok');
+  rentFetch();
+}
+function rentGeoNo(err){
+  rentState.geo='denied';
+  clearTimeout(rentState.safetyTimer);
+  rentRenderTop('denied');
+  rentFetch();
+}
+
+function rentRenderTop(mode){
+  const z=document.getElementById('rentTopZone');
+  if(mode==='ok'){
+    z.innerHTML=`<div class="rchip">
+      <span class="dotptr">📍</span>
+      <div class="rc-t"><b>${esc(rentState.label)}</b><small>কাছের বাড়িগুলো আগে সাজানো</small></div>
+      <button class="rc-edit" id="rentLocEdit" type="button" aria-label="পুনরায়" title="আবার লোকেশন নিন">🔄</button>
+    </div>`;
+  }else if(mode==='ask'){
+    z.innerHTML='<div class="rretry">📍 লোকেশন অনুমতি চাচ্ছি — ব্রাউজার ডায়ালগে <b>Allow</b> চাপুন…</div>';
+  }else if(mode==='denied'){
+    z.innerHTML='<div class="rretry">📍 লোকেশন ছাড়া দেখাচ্ছি — কাছের বাড়ি চাইলে অনুমতি দিন। <button id="rentRetry" type="button">🔄 লোকেশন দিন</button></div>';
+  }
+}
+
+function rentLoadingAnim(txt){
+  document.getElementById('rentResults').innerHTML=
+    '<div class="lbox">'+animScene('rent')+
+      '<p>'+esc(txt)+'<span class="ltrail">...</span></p>'+
+      '<small>হাজারো আপডেট লিস্টিং দেখছি ⏳</small>'+
+    '</div>';
+}
+
+function rentReset(){
+  ['rentQ','rentMin','rentMax'].forEach(id=>{document.getElementById(id).value='';});
+  document.getElementById('rentBeds').value='';
+  document.getElementById('rentBaths').value='';
+  document.getElementById('rentMonth').value='';
+  rentFetch();
+}
+
+/* ---------- এন্টার চাপে সার্চ ---------- */
+['rentQ','rentMin','rentMax'].forEach(id=>{
+  document.addEventListener('keydown',e=>{ if(e.target&&e.target.id===id&&e.key==='Enter'){ e.preventDefault(); rentFetch(); }});
+});
+
+async function rentFetch(){
+  const q=(document.getElementById('rentQ').value||'').trim();
+  const parts=[];
+  if(q) parts.push('q='+encodeURIComponent(q));
+  const beds=document.getElementById('rentBeds').value, baths=document.getElementById('rentBaths').value;
+  const rmin=(document.getElementById('rentMin').value||'').trim(), rmax=(document.getElementById('rentMax').value||'').trim();
+  const mv=document.getElementById('rentMonth').value;
+  if(beds) parts.push('beds='+beds);
+  if(baths) parts.push('baths='+baths);
+  if(rmin) parts.push('rentMin='+encodeURIComponent(rmin));
+  if(rmax) parts.push('rentMax='+encodeURIComponent(rmax));
+  if(mv){ const [y,m]=mv.split('-'); parts.push('monthY='+encodeURIComponent(y)); parts.push('monthM='+encodeURIComponent(m)); }
+  if(rentState.geo==='ok'){ parts.push('lat='+rentState.lat); parts.push('lng='+rentState.lng); }
+  rentLoadingAnim('আপনার শর্তে বাড়ি খোঁজা হচ্ছে');
+  try{
+    const d=await fetch('/api/rent'+(parts.length?'?'+parts.join('&'):'')).then(r=>r.json());
+    if(!d.ok){ document.getElementById('rentResults').innerHTML='<div class="hint"><div class="big">⚠️</div><p>ডাটা আনা যায়নি: '+esc(d.error||'')+'</p></div>'; return; }
+    renderRent(d);
+  }catch(e){
+    document.getElementById('rentResults').innerHTML='<div class="hint"><div class="big">📡</div><p>ইন্টারনেট সংযোগ পাওয়া যাচ্ছে না।</p></div>';
+  }
+}
+
+function relTime(t){
+  const ms=Date.now()-new Date(t).getTime();
+  const m=Math.floor(ms/60000);
+  if(m<2) return 'মাত্র';
+  if(m<60) return toBn(m)+' মিনিট আগে';
+  const h=Math.floor(m/60); if(h<24) return toBn(h)+' ঘণ্টা আগে';
+  const d2=Math.floor(h/24); if(d2<31) return toBn(d2)+' দিন আগে';
+  return toBn(Math.floor(d2/31))+' মাস আগে';
+}
+function furnLabel(f){ if(!f) return ''; f=String(f);
+  if(/semi/i.test(f)) return 'সেমি-ফার্নিশেভ';
+  if(/furnished/i.test(f)&&!/non|un/i.test(f)) return 'ফার্নিশেভ';
+  if(/non|un/i.test(f)) return 'আন-ফার্নিশেভ'; return f; }
+function avlHtml(a){ if(!a) return '';
+  const vacant=/vacant|ready|move/i.test(String(a));
+  const cls=vacant?'avl':'avl later';
+  const txt=vacant?'✅ এখনই উপলব্ধ':'📅 '+String(a).slice(0,60);
+  return '<span class="'+cls+'">'+esc(txt)+'</span>'; }
+
+function renderRent(d){
+  window._rg={from:d.geoFrom||null, q:d.query||''};
+  document.getElementById('rentMsg').innerHTML=
+    '<p style="color:var(--muted);font-size:12px;margin:2px 2px 10px">'+
+    (d.sortedByDistance?(d.geoFrom==='query'?('📍 “'+esc(d.query||'')+'”-এর কাছের বাড়ি আগে সাজানো'):'📍 আপনার থেকে দূরত্ব-ক্রমে সাজানো'):'🕒 সাম্প্রতিক আপডেট-ক্রমে')+
+    ' • '+toBn(d.count)+'টি লিস্টিং (মোট আনুমানিক '+toBn(d.total)+') — Bproperty, TheToletBD ও TheTolet থেকে আজকে সংগৃহীত</p>';
+  if(!d.count||!d.items.length){
+    document.getElementById('rentResults').innerHTML=
+      '<div class="hint"><div class="big">🤔</div><p>“'+esc(d.query||'এই এলাকা')+'” এর জন্য কিছু পাওয়া যায়নি। বানান/ভিন্ন বানান (যেমন ইংরেজি নাম) দিয়ে আবার খুঁজুন।</p></div>';
+    return;
+  }
+  document.getElementById('rentResults').innerHTML=d.items.map(it=>{
+    const num=n=>new Intl.NumberFormat('en-IN').format(n);
+    const spec=[
+      it.beds?('🛏 <i>'+toBn(it.beds)+'</i>'):'', it.baths?('🚿 <i>'+toBn(it.baths)+'</i>'):'',
+      it.sqft?('📐 <i>'+toBn(num(it.sqft))+' বর্গফুট</i>'):'',
+      furnLabel(it.furniture)?('🛋️ <i>'+furnLabel(it.furniture)+'</i>'):'',
+      it.kitchens?('🍳 <i>'+toBn(it.kitchens)+'</i>'):'',
+    ].filter(Boolean).join(' ');
+    return '<div class="rcr" onclick="showRentItem('+regRent(it)+')">'+
+      '<div class="rcr-img">'+
+        (it.image?('<img loading="lazy" src="'+esc(it.image)+'" onerror="this.remove()">'):'<div class="rcr-imgslots">🏠</div>')+
+        (it.distance!=null?('<span class="km">📏 '+toBn(it.distance)+' কিমি</span>'):'')+
+      '</div>'+
+      '<div class="rcr-b">'+
+        '<div class="t">'+esc(it.title)+' <span class="srcc '+(it.src==='TT'?'tt':it.src==='TL'?'tl':'bp')+'">'+(it.src==='TL'?'ToletBD':'Bproperty')+'</span></div>'+
+        '<div class="rcr-spec">'+(spec||'বিস্তারিত দেখতে চাপ দিন')+'</div>'+
+        '<div class="rcr-pr">'+
+          '<span class="p">'+tk(it.rent)+'</span><span class="pf">'+esc(it.rentFor||'/মাস')+'</span>'+
+          (it.negotiable?'<span class="neg">আলোচনাসাপেক্ষে</span>':'')+
+        '</div>'+
+        '<div class="rcr-loc">📍 '+esc([it.areaName,it.address].filter(Boolean).join(' — '))+'</div>'+
+        '<div class="rcr-avl">'+avlHtml(it.available)+'<span class="srcr">🕒 '+relTime(it.updatedAt)+'</span></div>'+
+      '</div>'+
+    '</div>';
+  }).join('');
+}
+
+function showRentItem(id){
+  const it=_rmap['r'+id]; if(!it) return;
+  const srcName = it.src==='TT' ? 'thetolet.com' : (it.src==='TL' ? 'thetoletbd.com' : 'bproperty.com');
+  document.getElementById('dStore').innerHTML='<span class="dot" style="background:#7c3aed;width:10px;height:10px;border-radius:50%;display:inline-block;margin-right:6px"></span>বাড়িড্ভাড়া <small style="color:var(--muted);font-weight:400">'+srcName+'</small>';
+  document.getElementById('dImg').innerHTML=it.image?('<img src="'+esc(it.image)+'" onerror="this.remove()">'):'<span class="ph">🏠</span>';
+  const num=n=>new Intl.NumberFormat('en-IN').format(n);
+  const specs=[
+    ['শয়কোঠা', it.beds?toBn(it.beds)+' টি':'—'],
+    ['গোসলখানা', it.baths?toBn(it.baths)+' টি':'—'],
+    ['আয়তন', it.sqft?toBn(num(it.sqft))+' বর্গফুট':'—'],
+    ['রান্নাঘর', it.kitchens?toBn(it.kitchens)+' টি':'—'],
+    ['ফার্নিশেইং', furnLabel(it.furniture)||'—'],
+    ['তলা', it.floors?toBn(it.floors)+' তলায়':'—'],
+    ['মোট তলা', it.totalFloor?toBn(it.totalFloor)+' তলা':'—'],
+    ['অ্যাটাচ্ড-বাথ', it.attachedBath?toBn(it.attachedBath)+' টি':'—'],
+    ['রাস্তা-প্রস্থ', it.roadFeet?toBn(it.roadFeet)+' ফুট':'—'],
+    ['পুরা-মুখ', it.facing||'—'],
+    ['পার্কিং', it.parking!=null?toBn(it.parking)+' টি':'—'],
+    ['কমপ্লেক্স', it.complex?String(it.complex).slice(0,26):'—'],
+    ['ধরন', (it.type||'—')+(it.available?(' • '+String(it.available).slice(0,26)):'')],
+  ];
+  document.getElementById('dBody').innerHTML=
+    '<h3>'+esc(it.title)+'</h3>'+
+    '<div class="meta">📍 '+esc([it.address,it.areaName].filter(Boolean).join(' — '))+'</div>'+
+    '<div class="dprice"><b>'+tk(it.rent)+'</b><small style="color:var(--muted);font-size:13px;margin-left:4px">'+esc(it.rentFor||'/মাস')+'</small>'+(it.negotiable?'<span class="off" style="margin-left:6px">দাম আলোচনাসাপেক্ষেভ</span>':'')+'</div>'+
+    (it.distance!=null?('<div class="dstore">📏 '+((window._rg&&window._rg.from==='query')?('“'+esc(window._rg.q||'')+'”'):'আপনা')+' থেকে প্রায় <b>'+toBn(it.distance)+' কিমি</b> দূরে</div>'):'')+
+    '<div class="rdgrid">'+specs.map(([k,v])=>'<div class="rdcell"><span>'+k+'</span><b>'+esc(v)+'</b></div>').join('')+'</div>'+
+    avlHtml(it.available)+
+    '<div style="display:flex;gap:8px;margin-top:12px">'+
+      (it.phone?('<a class="dgo" style="background:#16a34a;flex:1" href="tel:'+esc(it.phone)+'">📞 কল করুন '+esc(it.phone)+'</a>'):'')+
+      (it.url?('<a class="dgo" style="flex:1" href="'+esc(it.url)+'" target="_blank" rel="noopener">'+(it.src==='TT'?'TheTolet.com-এ দেখুন ↗':it.src==='TL'?'TheToletBD-এ দেখুন ↗':'Bproperty-তে দেখুন ↗')+'</a>'):'')+
+    '</div>'+
+    '<div class="meta" style="margin-top:8px">🕒 আপডেট: '+relTime(it.updatedAt)+' • উৎস: '+srcName+'</div>';
+  document.getElementById('dOvl').classList.add('on');
+  document.body.style.overflow='hidden';
+}
+
 </script>
+<div class="ovl" id="dOvl" onclick="if(event.target===this)closeDetail()">
+  <div class="sheet">
+    <div class="shbar"><b id="dStore">पণ্যের বিস্তারিত</b><button onclick="closeDetail()" aria-label="বন্ধ">✕</button></div>
+    <div class="dimg" id="dImg"></div>
+    <div class="dbody" id="dBody"></div>
+  </div>
+</div>
 </body>
 </html>
