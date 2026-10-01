@@ -1394,7 +1394,10 @@ async function rentFetch(){
 }
 
 function relTime(t){
-  const ms=Date.now()-new Date(t).getTime();
+  if(!t) return '';
+  const dt=new Date(t).getTime();
+  if(isNaN(dt)||dt<=0) return '';
+  const ms=Date.now()-dt;
   const m=Math.floor(ms/60000);
   if(m<2) return 'মাত্র';
   if(m<60) return toBn(m)+' মিনিট আগে';
@@ -1444,7 +1447,7 @@ function renderRent(d){
           (it.negotiable?'<span class="neg">আলোচনাসাপেক্ষে</span>':'')+
         '</div>'+
         '<div class="rcr-loc">📍 '+esc([it.areaName,it.address].filter(Boolean).join(' — '))+'</div>'+
-        '<div class="rcr-avl">'+avlHtml(it.available)+'<span class="srcr">🕒 '+relTime(it.updatedAt)+'</span></div>'+
+        '<div class="rcr-avl">'+avlHtml(it.available)+(relTime(it.updatedAt)?('<span class="srcr">🕒 '+relTime(it.updatedAt)+'</span>'):'')+'</div>'+
       '</div>'+
     '</div>';
   }).join('');
@@ -1482,7 +1485,7 @@ function showRentItem(id){
       (it.phone?('<a class="dgo" style="background:#16a34a;flex:1" href="tel:'+esc(it.phone)+'">📞 কল করুন '+esc(it.phone)+'</a>'):'')+
       (it.url?('<a class="dgo" style="flex:1" href="'+esc(it.url)+'" target="_blank" rel="noopener">'+(it.src==='TT'?'TheTolet.com-এ দেখুন ↗':it.src==='TL'?'TheToletBD-এ দেখুন ↗':'Bproperty-তে দেখুন ↗')+'</a>'):'')+
     '</div>'+
-    '<div class="meta" style="margin-top:8px">🕒 আপডেট: '+relTime(it.updatedAt)+' • উৎস: '+srcName+'</div>';
+    '<div class="meta" style="margin-top:8px">'+(relTime(it.updatedAt)?('🕒 আপডেট: '+relTime(it.updatedAt)+' • '):'')+'উৎস: '+srcName+'</div>';
   document.getElementById('dOvl').classList.add('on');
   document.body.style.overflow='hidden';
 }

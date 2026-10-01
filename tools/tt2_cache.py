@@ -126,14 +126,88 @@ def parse_cards_clean(html):
         })
     return cards
 
+EN_SHORT = {"jan": 1, "feb": 2, "mar": 3, "apr": 4, "may": 5, "jun": 6,
+            "jul": 7, "aug": 8, "sep": 9, "oct": 10, "nov": 11, "dec": 12}
+DETAIL_CAP = 250          # প্রতি রানে সর্বোচ্চ ডিটেইল-পেজ ফেচ
+DETAIL_TTL = 2 * 86400    # ডিটেইল ৭ দিন পর্যন্ত ফ্রেশ ধরা হয়
+_detail_budget = [DETAIL_CAP]
+
+def parse_detail(html):
+    """ডিটেইল পেজ থেকে 'Updated At' (01 Oct 2026) ও Availability Status"""
+    out = {}
+    m = re.search(r'Updated At</div>\s*<div class="datagrid-content">\s*([0-9]{1,2})\s*([A-Za-z]{3})[a-z]*\s*([0-9]{4})', html)
+    if m:
+        mi = EN_SHORT.get(m.group(2)[:3].lower())
+        if mi:
+            out["updatedAt"] = f"{m.group(3)}-{mi:02d}-{int(m.group(1)):02d}"
+    a = re.search(r'Availability Status</div>\s*<div class="datagrid-content">\s*[^<>]*<span[^>]*>\s*([A-Za-z ]+?)\s*</span>', html, re.I)
+    if a:
+        out["available"] = "available" in a.group(1).lower() and "not" not in a.group(1).lower()
+    return out
+
+def load_prev():
+    """আগের রানের ক্যাশই URL-ভিত্তিতে — ডিটেইল ফিল্ড রিসাইকেল করতে"""
+    prev = {}
+    if not os.path.isdir(OUT):
+        return prev
+    for fn in os.listdir(OUT):
+        if not fn.endswith(".json"):
+            continue
+        try:
+            d = json.load(open(os.path.join(OUT, fn), encoding="utf-8"))
+            for it in d.get("items", []):
+                if it.get("url"):
+                    prev[it["url"]] = it
+        except Exception:
+            pass
+    return prev
+
+def enrich(cards, prev):
+    """ডিটেইল পেজ থেকে আপডেট-টেট + তৈরিতা — পুরনো ক্যাশ বাড়ে, নতুনটা ফেচ"""
+    now = time.time()
+    kept = []
+    for c in cards:
+        p = prev.get(c.get("url", ""))
+        if p and p.get("available") is not None and p.get("detailAt") and now - p["detailAt"] < DETAIL_TTL:
+            c["updatedAt"] = p.get("updatedAt")
+            c["available"] = p.get("available")
+            c["detailAt"] = p.get("detailAt")
+        elif p and p.get("updatedAt"):
+            # তারিখটা রাখি, তারতা আবার যাচাই করব যথাসময়ে
+            c["updatedAt"] = p.get("updatedAt")
+            c["available"] = p.get("available")
+            if _detail_budget[0] > 0:
+                _detail_budget[0] -= 1
+                h = fetch(c["url"], retries=1)
+                if h:
+                    dd = parse_detail(h)
+                    c.update({k: v for k, v in dd.items() if v is not None})
+                    c["detailAt"] = now
+                time.sleep(0.4)
+        else:
+            if _detail_budget[0] > 0:
+                _detail_budget[0] -= 1
+                h = fetch(c["url"], retries=1)
+                if h:
+                    dd = parse_detail(h)
+                    c.update({k: v for k, v in dd.items() if v is not None})
+                    c["detailAt"] = now
+                time.sleep(0.4)
+        # কখনোই আউট-অফ-স্টক দেখাব না
+        if c.get("available") is False:
+            continue
+        kept.append(c)
+    return kept
+
 def main():
     os.makedirs(OUT, exist_ok=True)
     total_ok = 0
+    prev = load_prev()
 
     # ১) হোম (সারা দেশের বাছাই কার্ড)
     html = fetch(SITE + "/")
     if html:
-        cards = parse_cards_clean(html)
+        cards = enrich(parse_cards_clean(html), prev)
         save("home", cards)
         total_ok += 1
 
@@ -145,7 +219,7 @@ def main():
         if html is None:
             print("  skip (blocked/fail):", slug, file=sys.stderr)
             continue
-        cards = parse_cards_clean(html)
+        cards = enrich(parse_cards_clean(html), prev)
         save(slug, cards)
         total_ok += 1
         time.sleep(1)
@@ -156,7 +230,7 @@ def main():
         html = fetch(url, retries=1)
         if html is None:
             continue
-        cards = parse_cards_clean(html)
+        cards = enrich(parse_cards_clean(html), prev)
         save("div-" + dv, cards)
         total_ok += 1
         time.sleep(1)

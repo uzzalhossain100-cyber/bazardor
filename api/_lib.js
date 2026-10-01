@@ -1200,6 +1200,9 @@ async function fetchTheTolet({ q, lat, lng, beds, baths, rentMin, rentMax, month
 
   if (!rawCards) return { items: [], total: 0 };
 
+  // ডিটেইল-পেজে "উপলব্ধ নয়" ব্যাজ থাকলে বাদ (out-of-stock কখনোই নয়)
+  rawCards = rawCards.filter((c) => c.available !== false);
+
   // আমাদের ফরম্যাটে ম্যাপিং + ফিল্টার
   const items = rawCards.map((c) => {
     const coord = areaCoord(c.areaName) || areaCoord(c.locTxt || '') || null;
@@ -1234,7 +1237,8 @@ async function fetchTheTolet({ q, lat, lng, beds, baths, rentMin, rentMax, month
       countryAd: false,
       distance: d,
       geo: coord,
-      updatedAt: null,
+      updatedAt: c.updatedAt ? (c.updatedAt + 'T00:00:00Z') : null,
+      updatedDate: c.updatedAt || null,
       src: 'TT',
     };
   }).filter((x) => x.title && x.rent != null && x.rent >= 500 && x.rent <= 2000000);
