@@ -1145,27 +1145,25 @@ async function fetchTheTolet({ q, lat, lng, beds, baths, rentMin, rentMax, month
   // স্লাগ/ক্যাশ-কী নির্ধারণ
   let keys = ['home'];
   let pageSlug = null;
+  // রেডিয়াস-মোড: কোয়েরি-এলাকার কোঅর্ড বা GPS থাকলে সব ক্যাশ মিলিয়ে দেড়িয়াসে ফেলি
+  const targetCoord = (function () {
+    if (qaRaw) {
+      const enQT = (AREA_BN2EN[qaRaw.toLowerCase()] || AREA_BN2EN[qaRaw] || null);
+      return geoQueryCoord(qaRaw) || geoQueryCoord(enQT || '');
+    }
+    return null;
+  })() || (hasGeo ? [lat, lng] : null);
   if (qaRaw) {
     const enQ = (AREA_BN2EN[qaRaw.toLowerCase()] || AREA_BN2EN[qaRaw] || qaRaw);
     const slug = String(enQ).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '') || enQ;
-    const coord = geoQueryCoord(qaRaw) || geoQueryCoord(enQ);
-    if (coord) {
-      const dDhaka = haversineKm(coord[0], coord[1], 23.8103, 90.4125);
-      if (dDhaka <= 60) {
-        keys = [slug, 'home'];
-      } else {
-        let best = 'chittagong', bd = 1e9;
-        for (const hub of Object.keys(TT2_HUBS)) {
-          const dd = haversineKm(coord[0], coord[1], TT2_HUBS[hub][0], TT2_HUBS[hub][1]);
-          if (dd < bd) { bd = dd; best = hub; }
-        }
-        keys = ['div-' + best, 'home'];
-      }
-      pageSlug = slug;
+    if (targetCoord) {
+      keys = ['_all', slug, 'home'];
     } else {
       keys = [slug, 'home'];
-      pageSlug = slug;
     }
+    pageSlug = slug;
+  } else if (hasGeo) {
+    keys = ['_all', 'home'];
   }
 
   // ১) GitHub Actions-বিল্ট ক্যাশ (Vercel-ব্লক ফ্রি পথ)
@@ -1205,9 +1203,12 @@ async function fetchTheTolet({ q, lat, lng, beds, baths, rentMin, rentMax, month
 
   // আমাদের ফরম্যাটে ম্যাপিং + ফিল্টার
   const items = rawCards.map((c) => {
-    const coord = areaCoord(c.areaName) || areaCoord(c.locTxt || '') || null;
+    // এলাকার কোঅর্ড না-পেলে বিভাগ-হাব কোঅর্ড (চট্টগ্রাম/খুলনা ইত্যাদি)
+    const coord = areaCoord(c.areaName) || areaCoord(c.locTxt || '')
+      || (c.divisionPart && TT2_HUBS[c.divisionPart]) || (c.divisionPart === 'dhaka' ? [23.8103, 90.4125] : null)
+      || null;
     let d = null;
-    if (hasGeo && coord) d = Math.round(haversineKm(lat, lng, coord[0], coord[1]) * 10) / 10;
+    if (targetCoord && coord) d = Math.round(haversineKm(targetCoord[0], targetCoord[1], coord[0], coord[1]) * 10) / 10;
     let avail = null;
     if (c.fromMonth) {
       const mi = MONTHS_EN.indexOf(String(c.fromMonth).toLowerCase());
@@ -1359,11 +1360,14 @@ async function fetchToletBD({ q, lat, lng, beds, baths, rentMin, rentMax, monthY
 async function fetchBproperty({ q, lat, lng, beds, baths, rentMin, rentMax, monthY, monthM }) {
   const hasGeo = Number.isFinite(lat) && Number.isFinite(lng);
   const qa = String(q || '').trim().replace(/["\\<>]/g, '').slice(0, 60);
+  // রেডিয়াস-লক্ষ্য: কোয়েরির এলাকার কোঅর্ড, নইলে GPS — থাকলে বড় ক্যাচমেন্টে বাড়িয়ে দূরত্বে ফিল্টার
+  const enQBP = qa ? (AREA_BN2EN[qa.toLowerCase().trim()] || AREA_BN2EN[qa.trim()] || qa) : '';
+  const bpTarget = (qa && (geoQueryCoord(qa) || geoQueryCoord(enQBP))) || (hasGeo ? [lat, lng] : null);
   let filter = '(status="Rent" && active=true && approved=true && expired=false && is_project=false)';
-  if (qa) filter += ` && (title~"${qa}" || address~"${qa}" || area.name~"${qa}")`;
+  if (qa && !bpTarget) filter += ` && (title~"${qa}" || address~"${qa}" || area.name~"${qa}")`;
 
   const filtered = beds != null || baths != null || rentMin != null || rentMax != null || (monthY && monthM);
-  const perPage = filtered ? 100 : 40;
+  const perPage = (bpTarget || filtered) ? 200 : 100;
   let url =
     `${BP_API}/api/collections/properties/records?perPage=`+perPage+`&sort=-updated&expand=area` +
     `&filter=${encodeURIComponent(filter)}`;
@@ -1396,7 +1400,7 @@ async function fetchBproperty({ q, lat, lng, beds, baths, rentMin, rentMax, mont
     const baths = det.baths || det.bathrooms || null;
     const coord = areaCoord(areaName);
     const dist =
-      hasGeo && coord ? Math.round(haversineKm(lat, lng, coord[0], coord[1]) * 10) / 10 : null;
+      bpTarget && coord ? Math.round(haversineKm(bpTarget[0], bpTarget[1], coord[0], coord[1]) * 10) / 10 : null;
     return {
       id: p.id,
       title: String(p.title || '').trim(),
@@ -1466,7 +1470,7 @@ async function fetchBproperty({ q, lat, lng, beds, baths, rentMin, rentMax, mont
     });
   }
 
-  if (hasGeo) {
+  if (bpTarget) {
     finalItems.sort((a, b) => {
       if (a.distance != null && b.distance != null) return a.distance - b.distance;
       if (a.distance != null) return -1;
@@ -1476,7 +1480,7 @@ async function fetchBproperty({ q, lat, lng, beds, baths, rentMin, rentMax, mont
   } else {
     finalItems.sort((a, b) => String(b.updatedAt || '').localeCompare(String(a.updatedAt || '')));
   }
-  return { items: finalItems, total: data.totalItems || finalItems.length, sortedByDistance: hasGeo, translatedQuery: useQ !== qa ? useQ : null };
+  return { items: finalItems, total: data.totalItems || finalItems.length, sortedByDistance: !!bpTarget, translatedQuery: useQ !== qa ? useQ : null };
 }
 
 

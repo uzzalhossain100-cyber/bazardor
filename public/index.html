@@ -1419,7 +1419,7 @@ function renderRent(d){
   window._rg={from:d.geoFrom||null, q:d.query||''};
   document.getElementById('rentMsg').innerHTML=
     '<p style="color:var(--muted);font-size:12px;margin:2px 2px 10px">'+
-    (d.sortedByDistance?(d.geoFrom==='query'?('📍 “'+esc(d.query||'')+'”-এর কাছের বাড়ি আগে সাজানো'):'📍 আপনার থেকে দূরত্ব-ক্রমে সাজানো'):'🕒 সাম্প্রতিক আপডেট-ক্রমে')+
+    (d.sortedByDistance?(d.geoFrom==='query'?('📍 “'+esc(d.query||'')+'”-এর ২০ কিমি রেডিয়াসে, কাছের আগে সাজানো'):'📍 আপনার ২০ কিমি রেডিয়াসে, দূরত্ব-ক্রমে সাজানো'):'🕒 সাম্প্রতিক আপডেট-ক্রমে')+
     ' • '+toBn(d.count)+'টি লিস্টিং (মোট আনুমানিক '+toBn(d.total)+') — Bproperty, TheToletBD ও TheTolet থেকে আজকে সংগৃহীত</p>';
   if(!d.count||!d.items.length){
     document.getElementById('rentResults').innerHTML=

@@ -128,7 +128,7 @@ def parse_cards_clean(html):
 
 EN_SHORT = {"jan": 1, "feb": 2, "mar": 3, "apr": 4, "may": 5, "jun": 6,
             "jul": 7, "aug": 8, "sep": 9, "oct": 10, "nov": 11, "dec": 12}
-DETAIL_CAP = 250          # প্রতি রানে সর্বোচ্চ ডিটেইল-পেজ ফেচ
+DETAIL_CAP = 300          # প্রতি রানে সর্বোচ্চ ডিটেইল-পেজ ফেচ
 DETAIL_TTL = 2 * 86400    # ডিটেইল ৭ দিন পর্যন্ত ফ্রেশ ধরা হয়
 _detail_budget = [DETAIL_CAP]
 
@@ -199,41 +199,70 @@ def enrich(cards, prev):
         kept.append(c)
     return kept
 
+def fetch_pages(base, cap):
+    """পেজিনেশন ধরে যত পেজ পারা যায় তুলে নেয় (ইউনিক কার্ড-আইডি অনুযায়ী)"""
+    all_cards = []
+    seen = set()
+    for p in range(1, cap + 1):
+        url = base + ("&" if "?" in base else "?") + f"page={p}"
+        html = fetch(url, retries=1)
+        if html is None:
+            break
+        cards = parse_cards_clean(html)
+        fresh = [c for c in cards if c["id"] not in seen]
+        if not fresh and p > 1:
+            break
+        for c in fresh:
+            seen.add(c["id"])
+            all_cards.append(c)
+        time.sleep(0.6)
+    return all_cards
+
 def main():
     os.makedirs(OUT, exist_ok=True)
     total_ok = 0
     prev = load_prev()
 
     # ১) হোম (সারা দেশের বাছাই কার্ড)
-    html = fetch(SITE + "/")
-    if html:
-        cards = enrich(parse_cards_clean(html), prev)
+    time.sleep(1)
+    cards = enrich(fetch_pages(SITE + "/", 6), prev)
+    if cards:
         save("home", cards)
         total_ok += 1
 
-    # ২) ঢাকার এলাকাগুলো
+    # ২) ঢাকার এলাকাগুলো (৬ পেজ পর্যন্ত গভীর অর্থাৎ ~৭২ কার্ড)
     time.sleep(1)
     for slug in DHAKA_SLUGS:
-        url = f"{SITE}/bd/property-area/dhaka/dhaka/{slug}"
-        html = fetch(url, retries=1)
-        if html is None:
-            print("  skip (blocked/fail):", slug, file=sys.stderr)
-            continue
-        cards = enrich(parse_cards_clean(html), prev)
-        save(slug, cards)
+        base = f"{SITE}/bd/property-area/dhaka/dhaka/{slug}"
+        cards = enrich(fetch_pages(base, 6), prev)
+        if cards:
+            save(slug, cards)
         total_ok += 1
-        time.sleep(1)
+        time.sleep(0.5)
 
-    # ৩) বিভাগ-পেজ
+    # ৩) বিভাগ-পেজ (১০ পেজ পর্যন্ত)
     for dv in DIV_SLUGS:
-        url = f"{SITE}/bd/property-division/{dv}"
-        html = fetch(url, retries=1)
-        if html is None:
-            continue
-        cards = enrich(parse_cards_clean(html), prev)
-        save("div-" + dv, cards)
+        base = f"{SITE}/bd/property-division/{dv}"
+        cards = enrich(fetch_pages(base, 10), prev)
+        if cards:
+            save("div-" + dv, cards)
         total_ok += 1
-        time.sleep(1)
+        time.sleep(0.5)
+
+    # ৪) সম্মিলিত ক্যাশ — রেডিয়াস-সার্চের জন্য এক ফাইল
+    merged = {}
+    for fn in ["home.json"] + [s + ".json" for s in DHAKA_SLUGS] + ["div-" + d + ".json" for d in DIV_SLUGS]:
+        p = os.path.join(OUT, fn)
+        if not os.path.exists(p):
+            continue
+        try:
+            d = json.load(open(p, encoding="utf-8"))
+            for it in d.get("items", []):
+                if it.get("url") and it["url"] not in merged:
+                    merged[it["url"]] = it
+        except Exception:
+            pass
+    save("_all", list(merged.values()))
 
     if total_ok == 0:
         print("SAB KICCHU BLOCKED — কোনো পেজ আসেনি", file=sys.stderr)

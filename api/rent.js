@@ -55,6 +55,10 @@ module.exports = async function handler(req, res) {
       for (const it of items) {
         if (it.geo) it.distance = Math.round(haversineKm(target[0], target[1], it.geo[0], it.geo[1]) * 10) / 10;
       }
+      // ২০ কিমি রেডিয়াস: আশপাশের সবগুলো আবারা ধরাবো; বাইরেরটা বাদ, লোকেশনহীনটা থাকলেও শেষে রাখি
+      const inR = items.filter((it) => it.distance != null && it.distance <= 20);
+      const noGeo = items.filter((it) => it.distance == null);
+      if (inR.length) items = [...inR, ...noGeo];
     }
     if (target) {
       items.sort((a, b) => {
@@ -66,7 +70,7 @@ module.exports = async function handler(req, res) {
     } else {
       items.sort((a, b) => String(b.updatedAt || '').localeCompare(String(a.updatedAt || '')));
     }
-    items = items.slice(0, 120);
+    items = items.slice(0, 200);
     if (!items.length) throw new Error('কোনো সোর্স থেকে ডাটা পাওয়া যায়নি');
 
     return res.status(200).json({
