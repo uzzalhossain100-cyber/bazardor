@@ -1,0 +1,27 @@
+name: thetolet-cache-refresh
+
+on:
+  workflow_dispatch: {}
+  schedule:
+    - cron: '*/25 * * * *'
+
+permissions:
+  contents: write
+
+jobs:
+  scrape:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Build thetolet.com cache
+        run: python3 tools/tt2_cache.py
+      - name: Commit updated cache
+        run: |
+          git config user.email "ci@bazardor.local"
+          git config user.name "bazardor-ci"
+          git add data/tt2/
+          git commit -m "tt2 cache refresh" || echo "no changes"
+          git push
