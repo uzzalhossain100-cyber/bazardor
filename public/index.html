@@ -113,11 +113,27 @@
     background:rgba(0,0,0,.25); padding:6px 10px; border-radius:8px; color:#cfe6c8;
   }
 
-  .appinfo{background:linear-gradient(135deg,#f0fdf4,#eff6ff);border:1px solid #bbf7d0;border-radius:16px;padding:14px 16px;margin-top:16px}
-  .ai-title{font-weight:800;font-size:15px;margin-bottom:8px}
-  .appinfo ul{margin:0;padding-left:0;list-style:none}
+  .appinfo{background:linear-gradient(135deg,#f0fdf4,#eff6ff);border:1px solid #bbf7d0;border-radius:16px;padding:16px 16px;margin-top:16px}
+  .ai-title{font-weight:800;font-size:16px;margin-bottom:8px}
+  .ai-sub{font-size:13px;color:var(--muted);line-height:1.7;margin-top:2px}
+  .appinfo ul{margin:10px 0 0;padding-left:0;list-style:none}
   .appinfo li{font-size:12.8px;color:var(--ink);padding:4px 0;line-height:1.55}
   .appinfo li b{font-weight:700}
+  .hero-stats{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+  .hero-stats span{background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.25);border-radius:999px;padding:5px 12px;font-size:12px;font-weight:700}
+  .bene{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
+  @media(max-width:560px){.bene{grid-template-columns:1fr}}
+  .bene .bi{background:#fff;border:1px solid var(--line);border-radius:13px;padding:11px 12px;display:flex;gap:10px;align-items:flex-start}
+  .bene .bi .em{font-size:19px;line-height:1.2;margin-top:1px}
+  .bene .bi b{display:block;font-size:13.5px}
+  .bene .bi small{display:block;color:var(--muted);font-size:11.8px;margin-top:2px;line-height:1.55}
+  .srcline{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px}
+  .srcline i{font-style:normal;background:#eef2ff;color:#3730a3;border:1px solid #e0e7ff;border-radius:999px;padding:3px 10px;font-size:11px;font-weight:700}
+  .dlinfo{display:flex;align-items:center;gap:14px;flex-wrap:wrap;justify-content:center}
+  .dlbig2{display:inline-flex;align-items:center;gap:8px;background:linear-gradient(135deg,var(--brand) 0%,var(--brand2) 100%);color:#fff;text-decoration:none;font-weight:800;font-size:15px;border-radius:14px;padding:13px 24px;box-shadow:0 8px 20px rgba(14,107,63,.32)}
+  .dlbig2:active{transform:translateY(1px)}
+  .dlqk{font-size:11.5px;color:var(--muted);line-height:1.6}
+  .dlqk b{color:var(--ink);display:block;margin-bottom:2px;font-size:12.5px}
   .dlmini{display:flex;flex-direction:column;align-items:center;gap:8px;margin-top:18px;background:var(--card);border:1px dashed var(--line);border-radius:14px;padding:14px 12px}
   .dlbig{display:inline-block;background:var(--brand);color:#fff;text-decoration:none;font-weight:800;font-size:14.5px;border-radius:12px;padding:12px 22px;box-shadow:0 6px 16px rgba(23,58,39,.25)}
   .dlbig:active{transform:translateY(1px)}
@@ -437,22 +453,15 @@
   <section class="page" id="page-home">
     <div class="hero">
       <h2>পণ্যের নাম লিখুন, <span>আজকের দাম জানুন।</span></h2>
-      <p class="sub">নিত্যপণ্য থেকে ঔষধ, বাড়িভাড়া থেকে জরুরী সেবা — সবকিছুর আজকের দাম ও খোঁজ এক জায়গায়।</p>
+      <p class="sub">স্বপ্ন–চালডাল–অ্যাগোরার দাম একসাথে, ওষুধের সর্বশেষ দাম, আর আপনার পাড়ার ভাড়া-বাড়ি — সবকিছু এই এক ছোট্ট অ্যাপে।</p>
       <span class="today">📅 <b id="today" style="background:none;padding:0"></b></span>
+      <div class="hero-stats">
+        <span>🌐 ১০+ সাইট সরাসরি</span>
+        <span>⚡ আজকের লাইভ দাম</span>
+        <span>💚 ১০০% ফ্রি</span>
+      </div>
     </div>
-    <div class="appinfo">
-      <div class="ai-title">📱 অ্যাপটি কী? কী কী সুবিধা পাবেন</div>
-      <ul>
-        <li>🛒 <b>একই পণ্যের দাম একাধিক দোকানে</b> — কমদামিটা আগে দেখায়</li>
-        <li>💊 <b>ঔষধের দাম ও তথ্য</b> — মজুদদার সোর্স থেকে সরাসরি</li>
-        <li>🏘️ <b>বাড়িভাড়া খোঁজ</b> — আপনার লোকেশনের কাছে হাজারো ভাড়া-বাড়ি, দূরত্ব-ক্রমে সাজানো</li>
-        <li>🚨 <b>জরুরী হেল্পলাইন</b> — জরুরী সংখ্যাগুলো এক জায়গায়</li>
-        <li>⚡ <b>খুব ছোট অ্যাপ (~৭৩ KB)</b> — র‍্যাম/ডাটা কম লাগে, পুরনো ফোনেও করেচালায়</li>
-        <li>🔄 <b>নিজে নিজে আপডেট</b> — নতুন ফিচারের জন্য বারবার ডাউনলোড করতে হয় না</li>
-        <li>📍 <b>লোকেশন-জ্ঞানী</b> — পারমিশন দিলে কাছের ভাড়া-বাড়ি আপনাআপনি আসে</li>
-        <li>🎁 <b>পুরোটাই ফ্রি</b> — কোনো সাবস্ক্রিপশন বা বিজ্ঞাপন নেই</li>
-      </ul>
-    </div>
+
     <div class="featgrid">
       <button class="feat" data-page="bazar">
         <span class="ic" style="background:#e7f2ea">🛒</span>
@@ -475,10 +484,42 @@
         <b>যোগাযোগ</b><small>এডমিনের সাথে কথা বলুন</small>
       </button>
     </div>
-    <div class="dlmini">
-      <a id="apkBtn" class="dlbig" href="/bajardor.apk" download>📥 মোবাইল অ্যাপ ডাউনলোড করুন</a>
-      <img class="dlmini-qr" src="/api/qr" alt="QR" width="52" height="52" onerror="this.remove()">
-      <span class="dlmini-txt">QR স্ক্যানে ফোনে সরাসরি · <span id="dlurl">/bajardor.apk</span></span>
+    <div class="appinfo">
+      <div class="ai-title">📱 আপনার রোজকার ডিজিটাল সঙ্গী — বাজারদর</div>
+      <p class="ai-sub">পাশের দোকানের তেল-ডিমের দাম হোক, ডাক্তার লেখা ওষুধের খোঁজ হোক, কিংবা নতুন বাড়িভাড়া — প্রতিবার আলাদা আলাদা ওয়েবসাইট ঘুরঘুর করার দিন শেষ। বাজারদর এক ট্যাপে খুলে দেয় প্রায় একটা ডজন জনপ্রিয় শপিং, ফার্মেসি ও প্রপার্টি ওয়েবসাইটের সর্বশেষ তথ্য। কয়েক সেকেন্ডেই পাবেন তুলনামূলক দাম, সবচেয়ে কম দামের অফার, আসল আপডেট-তারিখসহ ভাড়ার তালিকা এবং জরুরী হেল্পলাইন নম্বর।</p>
+      <ul>
+        <li>🛍️ <b>তুলনা না করে কেনাকাটা করবেন না</b> — একই পণ্য কোন সাইটে সর্বনিম্ন, সেটিই আগে দেখায়</li>
+        <li>⏰ <b>সময় বাঁচায়, জাল দামের ফাঁদ থেকে বাঁচায়</b> — রিয়েল টাইমে সাইটগুলো থেকে সংগ্রহ, পুরনো বা স্টক-আউট আইটেম বাদ</li>
+        <li>🎁 <b>কোনো সাবস্ক্রিপশন, কোনো বিজ্ঞাপন নেই</b> — এবং চিরকাল-ফ্রি থাকার সংকল্প</li>
+      </ul>
+    </div>
+    <div class="appinfo">
+      <div class="ai-title">✨ কী কী সুবিধা পাবেন</div>
+      <div class="bene">
+        <div class="bi"><span class="em">🛒</span><div><b>একই পণ্যের দাম একাধিক দোকানে</b><small>তেল, চাল, ডিম থেকে প্রতিদিনের সব বাজার — ১০+ সাইটে সবচেয়ে কম দামটা আগে, তারপর বাকিগুলো সুন্দর করে সাজানো</small></div></div>
+        <div class="bi"><span class="em">💊</span><div><b>ঔষধের দাম ও জেনেরিক তথ্য</b><small>arogga, MedEx আর medeasy — দাম, মজুদ আর বিকল্প জেনেরিক একসাথে</small></div></div>
+        <div class="bi"><span class="em">🏘️</span><div><b>বাড়িভাড়া খোঁজ — দূরত্ব মাথায়</b><small>৩টি প্রপার্টি সাইট থেকে ২,০০০+ লিস্টিং; আপনার লোকেশনের ২০ কিমি রেডিয়াসে কাছেরটা আগে, আসল আপডেট-তারিখসহ</small></div></div>
+        <div class="bi"><span class="em">🚨</span><div><b>জরুরী হেল্পলাইন</b><small>৯৯৯, অ্যাম্বুলেন্স, গ্যাস-সিলিন্ডার — মুখস্ত রাখার দরকার নেই, ট্যাপ করলেই কল</small></div></div>
+        <div class="bi"><span class="em">⚡</span><div><b>১০০ KB-ও কম অ্যাপ</b><small>আপনার গ্যালারির একটা সেলফির চেয়েও ছোট — পুরনো ফোন, কম ইন্টারনেটে সবচেয়ে ঝপঝপে</small></div></div>
+        <div class="bi"><span class="em">🔄</span><div><b>নিজে নিজে আপডেট হয়</b><small>নতুন ফিচারের জন্য বারবার ডাউনলোড নয় — অ্যাপ খুললেই সর্বনতম সংস্করণ</small></div></div>
+        <div class="bi"><span class="em">📍</span><div><b>লোকেশন-জ্ঞানী কিন্তু গোপনীয়</b><small>লোকেশন চাইলে কাছের ভাড়া-বাড়ি আপনাআপনি; কোনো লোকেশন কোনো সার্ভারে সেভ হয় না</small></div></div>
+        <div class="bi"><span class="em">🎁</span><div><b>খোলা ও ফ্রি</b><small>কোনো অ্যাকাউন্ট, লগইন বা কার্ট লাগে না — ইনস্টল করলেই সরাসরি শুরু</small></div></div>
+      </div>
+      <div class="srcline" aria-label="ডেটার উৎস">
+        <i>🌐 তথ্যের উৎস:</i><i>Shwapno</i><i>Chaldal</i><i>Agora</i><i>Meena</i><i>arogga</i><i>MedEx</i><i>medeasy</i><i>Bproperty</i><i>TheToletBD</i><i>TheTolet.com</i>
+      </div>
+    </div>
+    <div class="dlmini" style="background:linear-gradient(135deg,#f0fdf4,#f0f9ff);border:1px solid #bbf7d0">
+      <div class="dlinfo">
+        <img class="dlmini-qr" src="/api/qr" alt="QR" width="84" height="84" onerror="this.remove()">
+        <div style="text-align:center">
+          <a id="apkBtn" class="dlbig2" href="/bajardor.apk" download>⬇️ মোবাইল অ্যাপ ডাউনলোড করুন</a>
+          <div class="dlqk" style="margin-top:8px">
+            <b>📲 QR স্ক্যান করলেই ফোনে ডাউনলোড</b>
+            লিংক: <span id="dlurl">/bajardor.apk</span> · আকার &lt; ১০০ KB · Android
+          </div>
+        </div>
+      </div>
     </div>
   </section>
 
