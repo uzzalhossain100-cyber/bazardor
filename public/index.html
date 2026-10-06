@@ -244,6 +244,7 @@
 .srcc{font-size:9px;font-weight:800;border-radius:6px;padding:2px 6px;vertical-align:2px;margin-left:4px;white-space:nowrap}
 .srcc.bp{background:#eef2ff;color:#4f46e5;border:1px solid #c7d2fe}
 .srcc.tl{background:#fff7ed;color:#c2410c;border:1px solid #fed7aa}
+.srcc.bh{background:#fef9c3;color:#854d0e;border:1px solid #fde047}
 .srcc.tt{background:#ecfdf5;color:#047857;border:1px solid #a7f3d0}
 .rretry{display:flex;align-items:center;gap:8px;background:#fff7ed;border:1px solid #fed7aa;border-radius:12px;padding:10px 12px;margin-bottom:10px;color:#9a3412;font-size:12.5px}
 .rretry button{background:#ea580c;color:#fff;border:0;border-radius:20px;padding:6px 13px;font-weight:700;font-size:12px;cursor:pointer;margin-left:auto;white-space:nowrap}
@@ -498,7 +499,7 @@
       <div class="bene">
         <div class="bi"><span class="em">🛒</span><div><b>একই পণ্যের দাম একাধিক দোকানে</b><small>তেল, চাল, ডিম থেকে প্রতিদিনের সব বাজার — ১০+ সাইটে সবচেয়ে কম দামটা আগে, তারপর বাকিগুলো সুন্দর করে সাজানো</small></div></div>
         <div class="bi"><span class="em">💊</span><div><b>ঔষধের দাম ও জেনেরিক তথ্য</b><small>arogga, MedEx আর medeasy — দাম, মজুদ আর বিকল্প জেনেরিক একসাথে</small></div></div>
-        <div class="bi"><span class="em">🏘️</span><div><b>বাড়িভাড়া খোঁজ — দূরত্ব মাথায়</b><small>৩টি প্রপার্টি সাইট থেকে ২,০০০+ লিস্টিং; আপনার লোকেশনের ২০ কিমি রেডিয়াসে কাছেরটা আগে, আসল আপডেট-তারিখসহ</small></div></div>
+        <div class="bi"><span class="em">🏘️</span><div><b>বাড়িভাড়া খোঁজ — দূরত্ব মাথায়</b><small>৪টি প্রপার্টি সাইট থেকে হাজারো লিস্টিং; আপনার লোকেশনের ২০ কিমি রেডিয়াসে কাছেরটা আগে, আসল আপডেট-তারিখসহ</small></div></div>
         <div class="bi"><span class="em">🚨</span><div><b>জরুরী হেল্পলাইন</b><small>৯৯৯, অ্যাম্বুলেন্স, গ্যাস-সিলিন্ডার — মুখস্ত রাখার দরকার নেই, ট্যাপ করলেই কল</small></div></div>
         <div class="bi"><span class="em">⚡</span><div><b>১০০ KB-ও কম অ্যাপ</b><small>আপনার গ্যালারির একটা সেলফির চেয়েও ছোট — পুরনো ফোন, কম ইন্টারনেটে সবচেয়ে ঝপঝপে</small></div></div>
         <div class="bi"><span class="em">🔄</span><div><b>নিজে নিজে আপডেট হয়</b><small>নতুন ফিচারের জন্য বারবার ডাউনলোড নয় — অ্যাপ খুললেই সর্বনতম সংস্করণ</small></div></div>
@@ -506,7 +507,7 @@
         <div class="bi"><span class="em">🎁</span><div><b>খোলা ও ফ্রি</b><small>কোনো অ্যাকাউন্ট, লগইন বা কার্ট লাগে না — ইনস্টল করলেই সরাসরি শুরু</small></div></div>
       </div>
       <div class="srcline" aria-label="ডেটার উৎস">
-        <i>🌐 তথ্যের উৎস:</i><i>Shwapno</i><i>Chaldal</i><i>Agora</i><i>Meena</i><i>arogga</i><i>MedEx</i><i>medeasy</i><i>Bproperty</i><i>TheToletBD</i><i>TheTolet.com</i>
+        <i>🌐 তথ্যের উৎস:</i><i>Shwapno</i><i>Chaldal</i><i>Agora</i><i>Meena</i><i>arogga</i><i>MedEx</i><i>medeasy</i><i>BdHousing.com</i><i>Bproperty</i><i>TheToletBD</i><i>TheTolet.com</i>
       </div>
     </div>
     <div class="dlmini" style="background:linear-gradient(135deg,#f0fdf4,#f0f9ff);border:1px solid #bbf7d0">
@@ -579,7 +580,7 @@
   <!-- ============ বাড়িভাড়া পেজ ============ -->
   <section class="page" id="page-rent" hidden>
     <div class="pagetitle"><span class="pt-ic">🏘️</span> বাড়িভাড়া</div>
-    <p class="rent-note">উৎস: Bproperty.com, TheToletBD.com ও TheTolet.com — সক্রিয় ও যাচাইকৃত ভাড়া-লিস্টিং, প্রতিবার তাজা।</p>
+    <p class="rent-note">উৎস: Bproperty.com, TheToletBD.com, TheTolet.com ও BdHousing.com — সক্রিয় ও যাচাইকৃত ভাড়া-লিস্টিং, প্রতিবার তাজা।</p>
 
     <div id="rentTopZone"></div>
     <div class="rcustom rstrip" id="rentCustom">
@@ -1462,7 +1463,7 @@ function renderRent(d){
   document.getElementById('rentMsg').innerHTML=
     '<p style="color:var(--muted);font-size:12px;margin:2px 2px 10px">'+
     (d.sortedByDistance?(d.geoFrom==='query'?('📍 “'+esc(d.query||'')+'”-এর ২০ কিমি রেডিয়াসে, কাছের আগে সাজানো'):'📍 আপনার ২০ কিমি রেডিয়াসে, দূরত্ব-ক্রমে সাজানো'):'🕒 সাম্প্রতিক আপডেট-ক্রমে')+
-    ' • '+toBn(d.count)+'টি লিস্টিং (মোট আনুমানিক '+toBn(d.total)+') — Bproperty, TheToletBD ও TheTolet থেকে আজকে সংগৃহীত</p>';
+    ' • '+toBn(d.count)+'টি লিস্টিং (মোট আনুমানিক '+toBn(d.total)+') — Bproperty, TheToletBD, TheTolet ও BdHousing থেকে আজকে সংগৃহীত</p>';
   if(!d.count||!d.items.length){
     document.getElementById('rentResults').innerHTML=
       '<div class="hint"><div class="big">🤔</div><p>“'+esc(d.query||'এই এলাকা')+'” এর জন্য কিছু পাওয়া যায়নি। বানান/ভিন্ন বানান (যেমন ইংরেজি নাম) দিয়ে আবার খুঁজুন।</p></div>';
@@ -1482,7 +1483,7 @@ function renderRent(d){
         (it.distance!=null?('<span class="km">📏 '+toBn(it.distance)+' কিমি</span>'):'')+
       '</div>'+
       '<div class="rcr-b">'+
-        '<div class="t">'+esc(it.title)+' <span class="srcc '+(it.src==='TT'?'tt':it.src==='TL'?'tl':'bp')+'">'+(it.src==='TT'?'TheTolet.com':it.src==='TL'?'ToletBD':'Bproperty')+'</span></div>'+
+        '<div class="t">'+esc(it.title)+' <span class="srcc '+(it.src==='TT'?'tt':it.src==='TL'?'tl':it.src==='BH'?'bh':'bp')+'">'+(it.src==='TT'?'TheTolet.com':it.src==='TL'?'ToletBD':it.src==='BH'?'BdHousing':'Bproperty')+'</span></div>'+
         '<div class="rcr-spec">'+(spec||'বিস্তারিত দেখতে চাপ দিন')+'</div>'+
         '<div class="rcr-pr">'+
           '<span class="p">'+tk(it.rent)+'</span><span class="pf">'+esc(it.rentFor||'/মাস')+'</span>'+
@@ -1497,7 +1498,7 @@ function renderRent(d){
 
 function showRentItem(id){
   const it=_rmap['r'+id]; if(!it) return;
-  const srcName = it.src==='TT' ? 'thetolet.com' : (it.src==='TL' ? 'thetoletbd.com' : 'bproperty.com');
+  const srcName = it.src==='TT' ? 'thetolet.com' : (it.src==='TL' ? 'thetoletbd.com' : (it.src==='BH' ? 'bdhousing.com' : 'bproperty.com'));
   document.getElementById('dStore').innerHTML='<span class="dot" style="background:#7c3aed;width:10px;height:10px;border-radius:50%;display:inline-block;margin-right:6px"></span>বাড়িড্ভাড়া <small style="color:var(--muted);font-weight:400">'+srcName+'</small>';
   document.getElementById('dImg').innerHTML=it.image?('<img src="'+esc(it.image)+'" onerror="this.remove()">'):'<span class="ph">🏠</span>';
   const num=n=>new Intl.NumberFormat('en-IN').format(n);
@@ -1525,7 +1526,7 @@ function showRentItem(id){
     avlHtml(it.available)+
     '<div style="display:flex;gap:8px;margin-top:12px">'+
       (it.phone?('<a class="dgo" style="background:#16a34a;flex:1" href="tel:'+esc(it.phone)+'">📞 কল করুন '+esc(it.phone)+'</a>'):'')+
-      (it.url?('<a class="dgo" style="flex:1" href="'+esc(it.url)+'" target="_blank" rel="noopener">'+(it.src==='TT'?'TheTolet.com-এ দেখুন ↗':it.src==='TL'?'TheToletBD-এ দেখুন ↗':'Bproperty-তে দেখুন ↗')+'</a>'):'')+
+      (it.url?('<a class="dgo" style="flex:1" href="'+esc(it.url)+'" target="_blank" rel="noopener">'+(it.src==='TT'?'TheTolet.com-এ দেখুন ↗':it.src==='TL'?'TheToletBD-এ দেখুন ↗':it.src==='BH'?'BdHousing-এ দেখুন ↗':'Bproperty-তে দেখুন ↗')+'</a>'):'')+
     '</div>'+
     '<div class="meta" style="margin-top:8px">'+(relTime(it.updatedAt)?('🕒 আপডেট: '+relTime(it.updatedAt)+' • '):'')+'উৎস: '+srcName+'</div>';
   document.getElementById('dOvl').classList.add('on');

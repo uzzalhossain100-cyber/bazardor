@@ -1357,6 +1357,96 @@ async function fetchToletBD({ q, lat, lng, beds, baths, rentMin, rentMax, monthY
   return { items: finalItems, total: (data.pagination && data.pagination.total) || finalItems.length };
 }
 
+// ==================== bdhousing.com (ক্যাশ-কুডোল) ====================
+function coordForArea(name) {
+  let c = areaCoord(name);
+  if (c) return c;
+  const low = String(name || '').toLowerCase().replace(/[^\w\s-]/g, ' ').replace(/\s+/g, ' ').trim();
+  if (!low) return null;
+  let best = null, bl = 0;
+  for (const k of Object.keys(AREA_COORDS)) {
+    if (low === k || low.startsWith(k + ' ') || low.endsWith(' ' + k) || low.includes(' ' + k)) {
+      if (k.length > bl) { best = AREA_COORDS[k]; bl = k.length; }
+    }
+  }
+  return best;
+}
+
+async function fetchBdhousing({ q, lat, lng, beds, baths, rentMin, rentMax, monthY, monthM }) {
+  const hasGeo = Number.isFinite(lat) && Number.isFinite(lng);
+  const qaRaw = String(q || '').trim().replace(/[\"<>]/g, '').slice(0, 60);
+  const filtered = beds != null || baths != null || rentMin != null || rentMax != null || (monthY && monthM);
+  const targetCoord = (function () {
+    if (qaRaw) {
+      const enQT = (AREA_BN2EN[qaRaw.toLowerCase()] || AREA_BN2EN[qaRaw] || null);
+      return geoQueryCoord(qaRaw) || geoQueryCoord(enQT || '');
+    }
+    return null;
+  })() || (hasGeo ? [lat, lng] : null);
+
+  let rawCards = null;
+  try {
+    const r = await timedFetch(TT2_CACHE + '/bdh-all.json', { headers: baseHeaders({ Accept: 'application/json' }) });
+    if (r.ok) {
+      const d = await r.json();
+      if (d && Array.isArray(d.items) && d.items.length) rawCards = d.items;
+    }
+  } catch (e) { /* ক্যাশ আনা গেল না */ }
+  if (!rawCards) return { items: [], total: 0 };
+
+  const items = rawCards.map((c) => {
+    const coord = coordForArea(c.areaName) || coordForArea(c.locTxt || '') || [23.8103, 90.4125];
+    const hasReal = coordForArea(c.areaName) || coordForArea(c.locTxt || '');
+    let d = null;
+    if (targetCoord && hasReal) d = Math.round(haversineKm(targetCoord[0], targetCoord[1], coord[0], coord[1]) * 10) / 10;
+    let avail = null;
+    if (c.fromMonth) {
+      const fm = monthYearOf(String(c.fromMonth));
+      if (fm) {
+        const now = new Date();
+        // অতীতের available-from = এখনই খালি ভাড়ার জন্য প্রস্তুত
+        avail = (fm.y < now.getFullYear() || (fm.y === now.getFullYear() && fm.m <= now.getMonth() + 1))
+          ? 'Available now' : (MONTHS_EN[fm.m - 1] + ' ' + fm.y);
+      }
+    }
+    return {
+      id: c.id,
+      title: c.title,
+      address: c.locTxt || '',
+      areaName: c.areaName || '',
+      rent: c.rent, rentFor: '/মাস',
+      beds: c.beds || null, baths: c.baths || null, kitchens: null,
+      floors: null, totalFloor: null, attachedBath: null, roadFeet: null, facing: null, complex: null,
+      sqft: c.sqft || null, furniture: c.furnishing || null,
+      available: avail,
+      parking: null, negotiable: false,
+      type: c.category || null, propertyType: c.category || null,
+      phone: null,
+      image: c.image || null,
+      images: c.image ? [c.image] : [],
+      url: c.url || null,
+      countryAd: false,
+      distance: d,
+      geo: hasReal ? coord : null,
+      updatedAt: null,
+      src: 'BH',
+    };
+  }).filter((x) => x.title && x.rent != null && x.rent >= 500 && x.rent <= 2000000 && x.available !== false);
+
+  let finalItems = items;
+  if (filtered) {
+    finalItems = items.filter((it) => {
+      if (beds != null) { if (!it.beds) return false; if (beds === 5 ? it.beds < 5 : it.beds !== beds) return false; }
+      if (baths != null) { if (!it.baths) return false; if (baths === 5 ? it.baths < 5 : it.baths !== baths) return false; }
+      if (rentMin != null && it.rent < rentMin) return false;
+      if (rentMax != null && it.rent > rentMax) return false;
+      if (monthY && monthM && !availableByMonth(it, { y: monthY, m: monthM })) return false;
+      return true;
+    });
+  }
+  return { items: finalItems, total: finalItems.length };
+}
+
 async function fetchBproperty({ q, lat, lng, beds, baths, rentMin, rentMax, monthY, monthM }) {
   const hasGeo = Number.isFinite(lat) && Number.isFinite(lng);
   const qa = String(q || '').trim().replace(/["\\<>]/g, '').slice(0, 60);
@@ -1507,7 +1597,7 @@ module.exports = {
   BN2EN, translateQuery,
   fetchShwapno, fetchChaldal, fetchAgora, fetchMeena, fetchOthoba,
   fetchCartup, fetchOthobaMain, fetchStartech, fetchBeshi, fetchSukhi, fetchKacha, b64twice,
-  fetchBproperty, fetchToletBD, fetchTheTolet, geoQueryCoord, areaCoord, haversineKm, normBdPhone, AREA_COORDS, AREA_BN2EN,
+  fetchBproperty, fetchToletBD, fetchTheTolet, fetchBdhousing, coordForArea, geoQueryCoord, areaCoord, haversineKm, normBdPhone, AREA_COORDS, AREA_BN2EN,
   fetchAroggaMed, fetchMedex, fetchMedeasy,
   SOURCES, MED_SOURCES, CACHE_TTL, MAX_ITEMS,
 };

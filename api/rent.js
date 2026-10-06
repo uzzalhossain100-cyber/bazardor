@@ -4,7 +4,7 @@ export const config = { regions: ['bom1'] };
  * GET /api/rent?q=উত্তরা&lat=23.81&lng=90.41
  * Bproperty-এর সক্রিয় ভাড়া লিস্টিং থেকে আসে; লোকেশন দিলে কাছের আগে সাজায়।
  */
-const { fetchBproperty, fetchToletBD, fetchTheTolet, geoQueryCoord, haversineKm } = require('./_lib.js');
+const { fetchBproperty, fetchToletBD, fetchTheTolet, fetchBdhousing, geoQueryCoord, haversineKm } = require('./_lib.js');
 
 module.exports = async function handler(req, res) {
   const q = String((req.query && req.query.q) || '').trim().slice(0, 60) || null;
@@ -30,11 +30,11 @@ module.exports = async function handler(req, res) {
       fn(args),
       new Promise((_, rej) => setTimeout(() => rej(new Error('টাইমআউট')), 8500)),
     ]).catch((e) => ({ items: [], total: 0, err: String((e && e.message) || e) }));
-    const [bp, tl, tt] = await Promise.all([
-      srcFetch(fetchBproperty, 'bp'), srcFetch(fetchToletBD, 'tl'), srcFetch(fetchTheTolet, 'tt'),
+    const [bp, tl, tt, bh] = await Promise.all([
+      srcFetch(fetchBproperty, 'bp'), srcFetch(fetchToletBD, 'tl'), srcFetch(fetchTheTolet, 'tt'), srcFetch(fetchBdhousing, 'bh'),
     ]);
 
-    let items = [...(bp.items || []), ...(tl.items || []), ...(tt.items || [])];
+    let items = [...(bp.items || []), ...(tl.items || []), ...(tt.items || []), ...(bh.items || [])];
     // ক্রস-সোর্স ডুপ্লিকেট বাদ (টাইটেল+এলাকা+ভাড়া মিলিলে)
     const seen = new Set();
     items = items.filter((it) => {
@@ -77,7 +77,7 @@ module.exports = async function handler(req, res) {
       ok: true,
       query: q,
       count: items.length,
-      total: (bp.total || 0) + (tl.total || 0) + (tt.total || 0),
+      total: (bp.total || 0) + (tl.total || 0) + (tt.total || 0) + (bh.total || 0),
       sortedByDistance: !!target,
       geoFrom,
       translatedQuery: (bp && bp.translatedQuery) || null,
